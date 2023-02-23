@@ -35,6 +35,7 @@ app.get('/marvel/:characterName', (req, res, next) => {
         thumbnailUrl: characterThumbnailUrl,
         comicAppearances: characterComicAppearances
       };
+
       res.status(200).json(characterData);
     })
     .catch(error => {
