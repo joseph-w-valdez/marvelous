@@ -13,7 +13,7 @@ const API_PRIVATE_KEY = 'c2746ff73c66112e104538fe16622cbb21205d8f';
 
 app.use(staticMiddleware);
 
-app.get('/marvel/:characterName', (req, res) => {
+app.get('/marvel/:characterName', (req, res, next) => {
 
   const timestamp = Date.now().toString();
   const hash = crypto.createHash('md5').update(timestamp + API_PRIVATE_KEY + API_PUBLIC_KEY).digest('hex');
@@ -22,15 +22,25 @@ app.get('/marvel/:characterName', (req, res) => {
 
   axios.get(url)
     .then(({ data: { data: { results } } }) => {
+      if (results.length === 0) {
+        throw new ClientError(404, `Could not find character with name '${characterName}'`);
+      }
       const { name, description = 'None Available', thumbnail, comics } = results[0] || {};
       const characterThumbnailUrl = thumbnail ? `${thumbnail.path}.${thumbnail.extension}` : 'None Available';
       const characterComicAppearances = comics ? comics.available : 'None Available';
-      res.status(200).json(`Name: ${name}, Description: ${description || 'None Available'}, Thumbnail URL: ${characterThumbnailUrl}, Comic Appearances: ${characterComicAppearances}`);
+
+      const characterData = {
+        name,
+        description: description || 'None Available',
+        thumbnailUrl: characterThumbnailUrl,
+        comicAppearances: characterComicAppearances
+      };
+      res.status(200).json(characterData);
     })
     .catch(error => {
-      throw new ClientError(500, error);
+      console.error(error);
+      next(error);
     });
-
 });
 
 app.use(errorMiddleware);
