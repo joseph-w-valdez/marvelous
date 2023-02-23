@@ -3,12 +3,14 @@ const express = require('express');
 const staticMiddleware = require('./static-middleware');
 const errorMiddleware = require('./error-middleware');
 const axios = require('axios');
-const crypto = require('crypto');
+const crypto = require('node:crypto');
 
 const app = express();
 
 const API_PUBLIC_KEY = 'b8483fd7fba99cd20a9fefc4e5106f88';
 const API_PRIVATE_KEY = 'c2746ff73c66112e104538fe16622cbb21205d8f';
+
+app.use(staticMiddleware);
 
 app.get('/marvel/:characterName', (req, res) => {
 
@@ -18,21 +20,17 @@ app.get('/marvel/:characterName', (req, res) => {
   const url = `https://gateway.marvel.com/v1/public/characters?apikey=${API_PUBLIC_KEY}&ts=${timestamp}&hash=${hash}&name=${encodeURIComponent(characterName)}`;
 
   axios.get(url)
-    .then(response => {
-      const data = response.data.data;
-      const character = data.results[0]; // Assuming the search only returned one result
-      const characterName = character.name;
-      const characterDescription = character.description;
-      const characterThumbnailUrl = `${character.thumbnail.path}.${character.thumbnail.extension}`;
-      res.status(200).send(`Name: ${characterName}, Description: ${characterDescription}, Thumbnail URL: ${characterThumbnailUrl}`);
+    .then(({ data: { data: { results } } }) => {
+      const { name, description = 'None Available', thumbnail, comics } = results[0] || {};
+      const characterThumbnailUrl = thumbnail ? `${thumbnail.path}.${thumbnail.extension}` : 'None Available';
+      const characterComicAppearances = comics ? comics.available : 'None Available';
+      res.status(200).json(`Name: ${name}, Description: ${description || 'None Available'}, Thumbnail URL: ${characterThumbnailUrl}, Comic Appearances: ${characterComicAppearances}`);
     })
     .catch(error => {
       console.error(error);
     });
 
 });
-
-app.use(staticMiddleware);
 
 app.use(errorMiddleware);
 
