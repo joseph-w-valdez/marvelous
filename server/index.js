@@ -1,6 +1,7 @@
 require('dotenv/config');
 const express = require('express');
 const staticMiddleware = require('./static-middleware');
+const ClientError = require('./client-error');
 const errorMiddleware = require('./error-middleware');
 const axios = require('axios');
 const crypto = require('node:crypto');
@@ -27,7 +28,7 @@ app.get('/marvel/:characterName', (req, res) => {
       res.status(200).json(`Name: ${name}, Description: ${description || 'None Available'}, Thumbnail URL: ${characterThumbnailUrl}, Comic Appearances: ${characterComicAppearances}`);
     })
     .catch(error => {
-      console.error(error);
+      throw new ClientError(500, error);
     });
 
 });
