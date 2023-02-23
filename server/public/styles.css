@@ -1,0 +1,15 @@
+body {
+  background-color: #131313;
+}
+
+.navbar {
+  color: white;
+  padding: 10px;
+}
+
+.logo {
+  background-color: red;
+  font-size: 2.3rem;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  padding: 0 3px;
+}
