@@ -5,25 +5,35 @@ import axios from 'axios';
 const buttonText = 'SEARCH';
 
 const Container = () => {
-  const [inputValue, setInputValue] = useState('');
-  const [error, setError] = useState('');
+  const [inputValue, setInputValue] = useState(undefined);
+  const [errorMessage, setErrorMessage] = useState(undefined);
 
   const searchHandler = () => {
+    if (!inputValue) {
+      setErrorMessage('Please enter a search term');
+      return;
+    }
+
     const apiUrl = `http://localhost:3000/marvel/${inputValue}`;
     axios.get(apiUrl)
       .then(response => {
         console.log(response.data);
-        setError('');
+        setErrorMessage(undefined);
       })
       .catch(error => {
-        console.error(error);
-        setError('error');
+        if (error.response && error.response.status === 404) {
+          console.error(error);
+          setErrorMessage(`Could not find character with name '${inputValue}'`);
+        } else {
+          console.error(console.error);
+          setErrorMessage('An error occurred while fetching data. Please try again later.');
+        }
       });
   };
 
   return (
     <div className='flex flex-wrap justify-center max-w-96 text-center'>
-      {error && <h1 className='text-red-700 bold'>{error}</h1>}
+      {errorMessage && <h1 className='text-red-700 bold text-lg'>{errorMessage}</h1>}
       <p className='text-white font-Poppins w-full p-3'>
         Search for any Marvel Character to learn more about them!
       </p>
