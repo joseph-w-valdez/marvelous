@@ -551,36 +551,122 @@ video {
   margin: 0.5rem;
 }
 
-.m-1 {
-  margin: 0.25rem;
+.m-3 {
+  margin: 0.75rem;
 }
 
-.ml-5 {
-  margin-left: 1.25rem;
+.m-4 {
+  margin: 1rem;
 }
 
-.ml-1 {
-  margin-left: 0.25rem;
+.m-8 {
+  margin: 2rem;
 }
 
-.ml-2 {
+.m-6 {
+  margin: 1.5rem;
+}
+
+.mx-2 {
   margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
 
-.mr-2 {
-  margin-right: 0.5rem;
+.mx-10 {
+  margin-left: 2.5rem;
+  margin-right: 2.5rem;
 }
 
 .ml-3 {
   margin-left: 0.75rem;
 }
 
-.mr-1 {
-  margin-right: 0.25rem;
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
+.mt-8 {
+  margin-top: 2rem;
 }
 
 .flex {
   display: flex;
+}
+
+.h-24 {
+  height: 6rem;
+}
+
+.h-12 {
+  height: 3rem;
+}
+
+.h-8 {
+  height: 2rem;
+}
+
+.h-10 {
+  height: 2.5rem;
+}
+
+.h-9 {
+  height: 2.25rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.w-12 {
+  width: 3rem;
+}
+
+.w-40 {
+  width: 10rem;
+}
+
+.w-96 {
+  width: 24rem;
+}
+
+.w-72 {
+  width: 18rem;
+}
+
+.w-24 {
+  width: 6rem;
+}
+
+.w-28 {
+  width: 7rem;
+}
+
+.w-32 {
+  width: 8rem;
+}
+
+.w-36 {
+  width: 9rem;
+}
+
+.basis-full {
+  flex-basis: 100%;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 
 .flex-wrap {
@@ -591,12 +677,20 @@ video {
   align-items: center;
 }
 
+.justify-center {
+  justify-content: center;
+}
+
 .justify-between {
   justify-content: space-between;
 }
 
 .rounded {
   border-radius: 0.25rem;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
 }
 
 .bg-\[\#131313\] {
@@ -609,16 +703,40 @@ video {
   background-color: rgb(177 52 52 / var(--tw-bg-opacity));
 }
 
-.p-2 {
-  padding: 0.5rem;
+.bg-gradient-to-r {
+  background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+.from-\[\#B13434\] {
+  --tw-gradient-from: #B13434;
+  --tw-gradient-to: rgb(177 52 52 / 0);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.to-red-900 {
+  --tw-gradient-to: #7f1d1d;
 }
 
 .p-1 {
   padding: 0.25rem;
 }
 
-.p-4 {
-  padding: 1rem;
+.p-2 {
+  padding: 0.5rem;
+}
+
+.p-3 {
+  padding: 0.75rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
 }
 
 .pl-1 {
@@ -629,13 +747,30 @@ video {
   padding-right: 0.25rem;
 }
 
+.text-center {
+  text-align: center;
+}
+
+.font-Audiowide {
+  font-family: Audiowide, sans-serif;
+}
+
 .font-Impact {
   font-family: Impact, sans-serif;
+}
+
+.font-Poppins {
+  font-family: Poppins, sans-serif;
 }
 
 .text-4xl {
   font-size: 2.25rem;
   line-height: 2.5rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
 }
 
 .text-white {

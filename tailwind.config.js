@@ -5,7 +5,8 @@ module.exports = {
     extend: {
       fontFamily: {
         Poppins: ['Poppins', 'sans-serif'],
-        Impact: ['Impact', 'sans-serif']
+        Impact: ['Impact', 'sans-serif'],
+        Audiowide: ['Audiowide', 'sans-serif']
       }
     }
   },
