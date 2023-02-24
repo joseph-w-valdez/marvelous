@@ -41,6 +41,7 @@ const Container = () => {
           className='w-72 h-9 rounded px-3 mt-3'
           value={inputValue}
           onChange={e => setInputValue(e.target.value)}
+          required
         />
         <div className='basis-full' />
         <Button text={buttonText} type="submit" />
