@@ -1,10 +1,14 @@
 import React from 'react';
-import HelloWorld from '../components/hello-world';
+import Navbar from '../components/Navbar';
+import SubNavbar from '../components/Sub-Navbar';
+import Container from '../components/Container';
 
 export default function Home(props) {
   return (
     <div>
-      <HelloWorld />
+      <Navbar />
+      <SubNavbar />
+      <Container />
     </div>
   );
 }
