@@ -5,16 +5,13 @@ import axios from 'axios';
 const buttonText = 'SEARCH';
 
 const Container = () => {
-  const [inputValue, setInputValue] = useState(undefined);
+  const [inputValue, setInputValue] = useState('');
   const [errorMessage, setErrorMessage] = useState(undefined);
 
-  const searchHandler = () => {
-    if (!inputValue) {
-      setErrorMessage('Please enter a search term');
-      return;
-    }
-
+  const searchHandler = event => {
+    event.preventDefault();
     const apiUrl = `http://localhost:3000/marvel/${inputValue}`;
+    // const apiUrl = `${process.env.API_ENDPOINT}${inputValue}`; more appropriate method; investigate after end of project
     axios.get(apiUrl)
       .then(response => {
         console.log(response.data);
@@ -33,18 +30,21 @@ const Container = () => {
 
   return (
     <div className='flex flex-wrap justify-center max-w-96 text-center'>
-      {errorMessage && <h1 className='text-red-700 bold text-lg'>{errorMessage}</h1>}
-      <p className='text-white font-Poppins w-full p-3'>
-        Search for any Marvel Character to learn more about them!
-      </p>
-      <input
-        type="text"
-        placeholder='Iron Man'
-        className='w-72 h-9 rounded px-3 mt-3'
-        onChange={e => setInputValue(e.target.value)}
-      />
-      <div className='basis-full' />
-      <Button text={buttonText} onClick={searchHandler}/>
+      {errorMessage && <h1 className='text-red-700 bold'>{errorMessage}</h1>}
+      <form onSubmit={searchHandler}>
+        <p className='text-white font-Poppins w-full p-3'>
+          Search for any Marvel Character to learn more about them!
+        </p>
+        <input
+          type="text"
+          placeholder='Iron Man'
+          className='w-72 h-9 rounded px-3 mt-3'
+          value={inputValue}
+          onChange={e => setInputValue(e.target.value)}
+        />
+        <div className='basis-full' />
+        <Button text={buttonText} type="submit" />
+      </form>
     </div>
   );
 };
