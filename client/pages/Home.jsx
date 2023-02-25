@@ -1,12 +1,12 @@
 import React from 'react';
 import SubNavbar from '../components/Sub-Navbar';
-import Container from '../components/Container';
+import CharacterSearch from '../components/CharacterSearch';
 
-export default function Home(props) {
+export default function Home({ setCharacterData }) {
   return (
     <div>
       <SubNavbar />
-      <Container />
+      <CharacterSearch setCharacterData={setCharacterData}/>
     </div>
   );
 }

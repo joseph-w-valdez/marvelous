@@ -1,21 +1,24 @@
 import React, { useState } from 'react';
 import Button from './Button';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const buttonText = 'SEARCH';
 
-const Container = () => {
+const CharacterSearch = ({ setCharacterData }) => {
   const [inputValue, setInputValue] = useState('');
   const [errorMessage, setErrorMessage] = useState(undefined);
+  const navigate = useNavigate();
 
   const searchHandler = event => {
     event.preventDefault();
     const apiUrl = `http://localhost:3000/marvel/${inputValue}`;
-    // const apiUrl = `${process.env.API_ENDPOINT}${inputValue}`; more appropriate method; investigate after end of project
     axios.get(apiUrl)
       .then(response => {
         console.log(response.data);
+        setCharacterData(response.data);
         setErrorMessage(undefined);
+        navigate('/character'); // navigate to /character route
       })
       .catch(error => {
         if (error.response && error.response.status === 404) {
@@ -50,4 +53,4 @@ const Container = () => {
   );
 };
 
-export default Container;
+export default CharacterSearch;
