@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 
 const Character = ({ characterData, setSubNavBarText }) => {
-  const { name, description, thumbnailUrl } = characterData;
-
+  const { name, description, thumbnailUrl, comicAppearances } = characterData;
   useEffect(() => {
     setSubNavBarText('CHARACTER');
   }, [setSubNavBarText]);
@@ -19,7 +18,11 @@ const Character = ({ characterData, setSubNavBarText }) => {
           style={{ borderImage: 'linear-gradient(to bottom, #B13434, #7F1D1D) 1' }}
         />
       </div>
-      <p className='mt-6 w-11/12 text-center'>Biography: {description}</p>
+      <div className='max-w-5xl mx-5 my-6'>
+        <p className='w-11/12'>Biography: {description}</p>
+        <p className='mt-6 w-11/12'>Comic Appearances: {comicAppearances}</p>
+        <div className='mt-6 w-11/12 cursor-pointer'><i className="fa-regular fa-star inline mr-3" /><p className="inline">Add to Favorites</p></div>
+      </div>
     </div>
   );
 };

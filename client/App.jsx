@@ -14,7 +14,7 @@ function App() {
   return (
     <div className="App">
       <Navbar />
-      <div className="pt-14">
+      <div className="mt-14">
         <SubNavbar subNavbarText={subNavbarText} setSubNavBarText={setSubNavBarText} />
         <Routes>
           <Route path="/" element={<Home setCharacterData={setCharacterData} setSubNavBarText={setSubNavBarText} />} />
