@@ -9,15 +9,16 @@ import Character from './pages/Character';
 
 function App() {
   const [characterData, setCharacterData] = useState(undefined);
+  const [subNavbarText, setSubNavBarText] = useState('SEARCH');
 
   return (
     <div className="App">
       <Navbar />
       <div className="pt-14">
-        <SubNavbar />
+        <SubNavbar subNavbarText={subNavbarText} setSubNavBarText={setSubNavBarText} />
         <Routes>
-          <Route path="/" element={<Home setCharacterData={setCharacterData} />} />
-          <Route path="/character" element={<Character characterData={characterData} />} />
+          <Route path="/" element={<Home setCharacterData={setCharacterData} setSubNavBarText={setSubNavBarText} />} />
+          <Route path="/character" element={<Character characterData={characterData} setSubNavBarText={setSubNavBarText} />} />
         </Routes>
       </div>
     </div>
