@@ -11,7 +11,14 @@ const Character = ({ characterData, setSubNavBarText }) => {
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
       <h1 className='text-4xl text-center mb-2'>{name}</h1>
       <div className='basis-full' />
-      <div className="max-w-sm"><img src={thumbnailUrl} alt={name} className='border-18 border-gradient w-full object-contain'/></div>
+      <div className="max-w-sm">
+        <img
+          src={thumbnailUrl}
+          alt={name}
+          className='border-18 border-red-border w-full object-contain'
+          style={{ borderImage: 'linear-gradient(to bottom, #B13434, #7F1D1D) 1' }}
+        />
+      </div>
       <p className='mt-6 w-11/12 text-center'>Biography: {description}</p>
     </div>
   );

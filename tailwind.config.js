@@ -2,24 +2,13 @@
 module.exports = {
   content: ['./server/public/*.{html,js}', './client/*.jsx', './client/**/*.jsx'],
   theme: {
-    borderWidth: {
-      18: '18px'
-    },
     extend: {
-      gradientColorStops: {
-        'red-border-start': '#FF0033',
-        'red-border-end': '#D50000'
+      borderWidth: {
+        18: '18px'
       },
       linearBorderGradients: {
-        directions: {
-          // defaults to these values
-          t: 'to top',
-          r: 'to right',
-          b: 'to bottom',
-          l: 'to left'
-        },
         colors: {
-          'red-border': ['#FF0033', '#D50000']
+          'red-border': ['linear-gradient(to right, #FF0033, #D50000)']
         }
       },
       fontFamily: {
@@ -28,6 +17,9 @@ module.exports = {
         Audiowide: ['Audiowide', 'sans-serif']
       }
     }
+  },
+  variants: {
+    linearBorderGradients: ['responsive']
   },
   plugins: []
 };
