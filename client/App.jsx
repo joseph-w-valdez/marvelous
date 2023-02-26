@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import SubNavbar from './components/Sub-Navbar';
 
 import Navbar from './components/Navbar';
 
@@ -12,10 +13,13 @@ function App() {
   return (
     <div className="App">
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Home setCharacterData={setCharacterData}/>} />
-        <Route path="/character" element={<Character characterData={characterData}/>} />
-      </Routes>
+      <div className="pt-14">
+        <SubNavbar />
+        <Routes>
+          <Route path="/" element={<Home setCharacterData={setCharacterData} />} />
+          <Route path="/character" element={<Character characterData={characterData} />} />
+        </Routes>
+      </div>
     </div>
   );
 }
