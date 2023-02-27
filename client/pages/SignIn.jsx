@@ -1,8 +1,11 @@
 import React from 'react';
 
-const SignIn = () => {
+const SignIn = ({ onMount }) => {
+
+  onMount();
+
   return (
-    <div>SignIn</div>
+    <div className='text-white font-Poppins'>SignIn</div>
   );
 };
 
