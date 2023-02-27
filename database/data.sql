@@ -1,4 +1,4 @@
-INSERT INTO users (username, "emailHash", "passwordHash", "profilePictureUrl") VALUES
+INSERT INTO users (username, email, "passwordHash", "profilePictureUrl") VALUES
   ('user1', 'hash_of_user1@example.com', '$2y$10$Y53YJF.TgZm9kckHnpq3z.18uzJfhqb7OM/YtByY/UXTQzRtjL5x2', 'https://example.com/user1.jpg'),
   ('user2', 'hash_of_user2@example.com', '$2y$10$c4Q/W50tFhDlOwscyj81AOCc5lz5O5hvlEs5OeiSEld9GnJ1f7VWK', NULL);
 

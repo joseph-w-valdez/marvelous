@@ -57,19 +57,19 @@ app.get('/marvel/:characterName', (req, res, next) => {
 });
 
 app.post('/marvel/sign-up', (req, res, next) => {
-  const { username, password } = req.body;
-  if (!username || !password) {
-    throw new ClientError(400, 'username and password are required fields');
+  const { username, password, email } = req.body;
+  if (!username || !password || !email) {
+    throw new ClientError(400, 'username, password, and email are all required fields');
   }
   argon2
     .hash(password)
     .then(passwordHash => {
       const sql = `
-        insert into "users" ("username", "passwordHash")
-        values ($1, $2)
-        returning "id", "username", "createdAt"
+        insert into "users" ("username", "passwordHash", "email")
+        values ($1, $2, $3)
+        returning "id", "username", "email", "createdAt"
       `;
-      const params = [username, passwordHash];
+      const params = [username, passwordHash, email];
       return db.query(sql, params);
     })
     .then(result => {
