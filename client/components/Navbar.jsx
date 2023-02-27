@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import ProfileMenu from './ProfileMenu';
 
 export default function Navbar() {
   return (
@@ -10,6 +11,7 @@ export default function Navbar() {
 
       </div>
       <i className="profile-icon fa-regular fa-user text-white mr-2 cursor-pointer border-2 rounded-full overflow-hidden text-2xl" />
+      <ProfileMenu />
     </div>
   );
 }
