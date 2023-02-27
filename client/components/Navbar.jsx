@@ -9,7 +9,7 @@ export default function Navbar() {
         <Link to='/'><span className='logo bg-[#B13434] text-white font-Impact text-4xl pl-1 pr-1'>Marvelous</span></Link>
 
       </div>
-      <i className="profile-icon fa-regular fa-user text-white mr-2" />
+      <i className="profile-icon fa-regular fa-user text-white mr-2 cursor-pointer border-2 rounded-full overflow-hidden text-2xl" />
     </div>
   );
 }
