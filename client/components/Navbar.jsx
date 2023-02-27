@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ProfileMenu from './ProfileMenu';
 
 export default function Navbar() {
+  const [profileMenu, setProfileMenu] = useState('closed');
+
+  const profileMenuHandler = () => {
+    profileMenu === 'closed' ? setProfileMenu('open') : setProfileMenu('closed');
+  };
+
   return (
     <div className='navbar flex items-center justify-between py-2 px-1 fixed top-0 w-full z-10 bg-[#131313]'>
       <div className='flex items-center'>
@@ -10,8 +16,11 @@ export default function Navbar() {
         <Link to='/'><span className='logo bg-[#B13434] text-white font-Impact text-4xl pl-1 pr-1'>Marvelous</span></Link>
 
       </div>
-      <i className="profile-icon fa-regular fa-user text-white mr-2 cursor-pointer border-2 rounded-full overflow-hidden text-2xl" />
-      <ProfileMenu />
+      <i
+        className="profile-icon fa-regular fa-user text-white mr-2 cursor-pointer border-2 rounded-full overflow-hidden text-2xl"
+        onClick={profileMenuHandler}
+      />
+      <ProfileMenu profileMenu={profileMenu} />
     </div>
   );
 }
