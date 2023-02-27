@@ -1,10 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
-const Character = ({ characterData, setSubNavBarText }) => {
+const Character = ({ characterData, onMount }) => {
   const { name, description, thumbnailUrl, comicAppearances } = characterData;
-  useEffect(() => {
-    setSubNavBarText('CHARACTER');
-  }, [setSubNavBarText]);
+  onMount();
 
   return (
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>

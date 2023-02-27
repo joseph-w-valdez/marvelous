@@ -7,7 +7,7 @@ export default function Navbar() {
   const profileMenuRef = useRef(null);
 
   useEffect(() => {
-    const handleClickOutside = event => {
+    const handleClickOutside = (event) => {
       if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
         setProfileMenu(false);
       }
