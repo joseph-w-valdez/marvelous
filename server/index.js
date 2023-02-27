@@ -5,6 +5,7 @@ const ClientError = require('./client-error');
 const errorMiddleware = require('./error-middleware');
 const axios = require('axios');
 const crypto = require('node:crypto');
+const path = require('path');
 
 const pg = require('pg');
 const argon2 = require('argon2');
@@ -77,6 +78,10 @@ app.post('/marvel/sign-up', (req, res, next) => {
       res.status(201).json(user);
     })
     .catch(err => next(err));
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 app.use(errorMiddleware);
