@@ -3,8 +3,11 @@ import Button from '../components/Button';
 
 const Register = ({ onMount }) => {
 
-  const [usernameInputValue, setUsernameInputValue] = useState('');
-  const [passwordInputvalue, setPasswordInputValue] = useState('');
+  const [usernameInput, setUsernameInput] = useState('');
+  const [emailInput, setEmailInput] = useState('');
+  const [emailVerifyInput, setEmailVerifyInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
+  const [passwordVerifyInput, setPasswordVerifyInput] = useState('');
 
   onMount();
 
@@ -17,17 +20,17 @@ const Register = ({ onMount }) => {
           type="text"
           placeholder='Username'
           className='w-72 h-9 rounded px-3 mt-3'
-          value={usernameInputValue}
-          onChange={(e) => setUsernameInputValue(e.target.value)}
+          value={usernameInput}
+          onChange={(e) => setUsernameInput(e.target.value)}
           required
         />
         <div className='basis-full' />
         <input
-          type="text"
+          type="email"
           placeholder='Email'
           className='w-72 h-9 rounded px-3 mt-3'
-          value={passwordInputvalue}
-          onChange={(e) => setPasswordInputValue(e.target.value)}
+          value={emailInput}
+          onChange={(e) => setEmailInput(e.target.value)}
           required
         />
         <div className='basis-full' />
@@ -35,8 +38,8 @@ const Register = ({ onMount }) => {
           type="text"
           placeholder='Confirm Email'
           className='w-72 h-9 rounded px-3 mt-3'
-          value={passwordInputvalue}
-          onChange={(e) => setPasswordInputValue(e.target.value)}
+          value={emailVerifyInput}
+          onChange={(e) => setEmailVerifyInput(e.target.value)}
           required
         />
         <div className='basis-full' />
@@ -44,8 +47,8 @@ const Register = ({ onMount }) => {
           type="text"
           placeholder='Password'
           className='w-72 h-9 rounded px-3 mt-3'
-          value={passwordInputvalue}
-          onChange={(e) => setPasswordInputValue(e.target.value)}
+          value={passwordInput}
+          onChange={(e) => setPasswordInput(e.target.value)}
           required
         />
         <div className='basis-full' />
@@ -53,17 +56,15 @@ const Register = ({ onMount }) => {
           type="text"
           placeholder='Confirm Password'
           className='w-72 h-9 rounded px-3 mt-3'
-          value={passwordInputvalue}
-          onChange={(e) => setPasswordInputValue(e.target.value)}
+          value={passwordVerifyInput}
+          onChange={(e) => setPasswordVerifyInput(e.target.value)}
           required
         />
         <div className='basis-full' />
         <input
-          type="text"
-          placeholder='Upload Profile Picture (optional)'
-          className='w-72 h-9 rounded px-3 mt-3'
-          value={passwordInputvalue}
-          onChange={(e) => setPasswordInputValue(e.target.value)}
+          type="file"
+          className='w-72 h-9 px-3 mt-3 text-white'
+          accept=".png, .jpg, .jpeg, .gif"
         />
         <div className='basis-full' />
         <Button text='Sign Up' type="submit" />
