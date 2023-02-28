@@ -33,6 +33,7 @@ const CharacterSearch = ({ onSearch }) => {
   return (
     <div className='flex flex-wrap justify-center max-w-96 text-center'>
       {errorMessage && <h1 className='text-red-700 bold'>{errorMessage}</h1>}
+      <div className='basis-full' />
       <form onSubmit={searchHandler}>
         <p className='text-white font-Poppins w-full p-3'>
           Search for any Marvel Character to learn more about them!
