@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Button from '../components/Button';
+import { Link } from 'react-router-dom';
 
 const SignIn = ({ onMount }) => {
   const [usernameInputValue, setUsernameInputValue] = useState('');
@@ -10,7 +11,7 @@ const SignIn = ({ onMount }) => {
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
       <h1 className='text-4xl text-center mb-2'>SIGN IN</h1>
       <div className='basis-full' />
-      <form className='text-center'>
+      <form className='text-center text-black'>
         <input
           type="text"
           placeholder='Username'
@@ -28,8 +29,9 @@ const SignIn = ({ onMount }) => {
           required
         />
         <div className='basis-full' />
-        <Button text='SIGN IN' type="submit" />
+        <Button text='SIGN IN' type="submit"/>
       </form>
+      <Link to='/register'><p className='text-blue-500 underline text-sm'>Don't have an account? click Here!</p></Link>
     </div>
   );
 };
