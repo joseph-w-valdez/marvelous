@@ -5,7 +5,7 @@ import { ErrorMessage } from '@hookform/error-message';
 
 const Register = ({ onMount }) => {
 
-  const { register, handleSubmit, watch, formState: { errors }, setError, clearErrors } = useForm();
+  const { register, handleSubmit, watch, formState: { errors } } = useForm();
 
   const onSubmit = (data) => {
     console.log(data);
@@ -58,11 +58,20 @@ const Register = ({ onMount }) => {
           name='password'
           {...register('password', {
             required: true,
-            pattern: {
-              value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=.*[^\s]).{8,}$/,
-              message: 'Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one number, and one special character'
+            minLength: {
+              value: 8,
+              message: 'must be at least 8 characters long'
+            },
+            maxLength: {
+              value: 25,
+              message: 'cannot be more than 25 characters long'
+            },
+            validate: {
+              uppercase: (value) => /(?=.*[A-Z])/.test(value) || 'must contain at least one uppercase letter',
+              lowercase: (value) => /(?=.*[a-z])/.test(value) || 'must contain at least one lowercase letter',
+              number: (value) => /(?=.*\d)/.test(value) || 'must contain at least one number',
+              special: (value) => /(?=.*[@#$%^&+=!])/.test(value) || 'must contain at least one special character'
             }
-
           })}
           placeholder='Password'
           className='w-72 h-9 rounded px-3 mt-3'
@@ -72,7 +81,6 @@ const Register = ({ onMount }) => {
           name="password"
           render={({ message }) => <p className="text-red-500 mt-2">{message}</p>}
         />
-
         <div className='basis-full' />
         <input
           type="password"
