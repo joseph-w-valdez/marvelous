@@ -1,7 +1,7 @@
 import React from 'react';
 
-const Character = ({ characterData, onMount }) => {
-  const { name, description, thumbnailUrl, comicAppearances } = characterData;
+const Character = ({ selectedCharacter, onMount }) => {
+  const { name, description, thumbnailUrl, comicAppearances } = selectedCharacter;
   onMount();
 
   return (
