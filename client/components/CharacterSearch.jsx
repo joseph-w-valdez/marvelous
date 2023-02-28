@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const buttonText = 'SEARCH';
 
-const CharacterSearch = ({ onSearch, setSubNavbarText }) => {
+const CharacterSearch = ({ onSearch }) => {
   const [inputValue, setInputValue] = useState('');
   const [errorMessage, setErrorMessage] = useState(undefined);
   const navigate = useNavigate();
