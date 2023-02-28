@@ -20,6 +20,7 @@ const SignIn = ({ onMount }) => {
           onChange={(e) => setUsernameInputValue(e.target.value)}
           required
         />
+        <div className='basis-full' />
         <input
           type="text"
           placeholder='Password'
@@ -31,7 +32,8 @@ const SignIn = ({ onMount }) => {
         <div className='basis-full' />
         <Button text='SIGN IN' type="submit"/>
       </form>
-      <Link to='/register'><p className='text-blue-500 underline text-sm'>Don't have an account? click Here!</p></Link>
+      <div className='basis-full' />
+      <Link to='/register'><p className='text-blue-500 underline text-sm'>Don&apos;t have an account? click Here!</p></Link>
     </div>
   );
 };

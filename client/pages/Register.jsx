@@ -21,6 +21,7 @@ const Register = ({ onMount }) => {
           onChange={(e) => setUsernameInputValue(e.target.value)}
           required
         />
+        <div className='basis-full' />
         <input
           type="text"
           placeholder='Email'
@@ -29,6 +30,7 @@ const Register = ({ onMount }) => {
           onChange={(e) => setPasswordInputValue(e.target.value)}
           required
         />
+        <div className='basis-full' />
         <input
           type="text"
           placeholder='Confirm Email'
@@ -37,6 +39,7 @@ const Register = ({ onMount }) => {
           onChange={(e) => setPasswordInputValue(e.target.value)}
           required
         />
+        <div className='basis-full' />
         <input
           type="text"
           placeholder='Password'
@@ -45,6 +48,7 @@ const Register = ({ onMount }) => {
           onChange={(e) => setPasswordInputValue(e.target.value)}
           required
         />
+        <div className='basis-full' />
         <input
           type="text"
           placeholder='Confirm Password'
@@ -53,6 +57,7 @@ const Register = ({ onMount }) => {
           onChange={(e) => setPasswordInputValue(e.target.value)}
           required
         />
+        <div className='basis-full' />
         <input
           type="text"
           placeholder='Upload Profile Picture (optional)'
@@ -63,6 +68,7 @@ const Register = ({ onMount }) => {
         <div className='basis-full' />
         <Button text='Sign Up' type="submit" />
       </form>
+      <div className='basis-full' />
       <p className='text-white text-sm'>
         By creating an account, you agree to our <a href="" className='text-blue-500 underline'>Terms of Use</a> and our <a href="" className='text-blue-500 underline'> Privacy Policy</a>
       </p>
