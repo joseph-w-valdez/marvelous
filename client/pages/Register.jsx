@@ -1,13 +1,33 @@
 import React, { useState } from 'react';
 import Button from '../components/Button';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
+
 import { ErrorMessage } from '@hookform/error-message';
 const axios = require('axios');
 
 const Register = ({ onMount }) => {
   const [errorMessage, setErrorMessage] = useState(undefined);
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const { control, register, handleSubmit, watch, formState: { errors } } = useForm();
+
+  const FileInput = ({ onChange }) => {
+    const handleOnChange = (e) => {
+      const file = e.target.files[0];
+      if (file && file.size <= 15 * 1024 * 1024) {
+        onChange(e);
+      } else {
+        alert('File size should be less than or equal to 15MB');
+      }
+    };
+
+    return (
+      <input
+        type="file"
+        onChange={handleOnChange}
+        accept=".png, .jpg, .jpeg, .gif"
+      />
+    );
+  };
 
   const handleRegistration = (data) => {
     console.log(data);
@@ -16,12 +36,17 @@ const Register = ({ onMount }) => {
     axios.post(apiUrl, data)
       .then((response) => {
         console.log(response.data);
+        if (data.file && data.file[0]) {
+          const formData = new FormData();
+          formData.append('file', data.file[0]);
+          const uploadUrl = 'http://localhost:3000/marvel/upload';
+          axios.post(uploadUrl, formData);
+        }
       })
       .catch((error) => {
         console.error(error);
         if (error.response && error.response.status === 409) {
           const data = error.response;
-          console.log('DATA', data);
           if (data.status === 409) {
             setErrorMessage(data.data.error);
           } else {
@@ -123,13 +148,21 @@ const Register = ({ onMount }) => {
           render={({ message }) => <p className="text-red-500 mt-2">{message}</p>}
         />
         <div className='basis-full' />
-        <input
+        <Controller
+          name="file"
+          control={control}
+          render={({ field: { onChange } }) => (
+            <FileInput onChange={onChange} />
+          )}
+        />
+        <div className='basis-full' />
+        {/* <input
           type="file"
           name='file'
           className='w-72 h-9 px-3 mt-3 text-white'
           accept=".png, .jpg, .jpeg, .gif"
         />
-        <div className='basis-full' />
+        <div className='basis-full' /> */}
         <Button text='Sign Up' />
       </form>
       <div className='basis-full' />

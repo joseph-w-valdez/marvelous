@@ -6,6 +6,7 @@ const errorMiddleware = require('./error-middleware');
 const axios = require('axios');
 const crypto = require('node:crypto');
 const path = require('path');
+const multer = require('multer');
 
 const pg = require('pg');
 const argon2 = require('argon2');
@@ -107,6 +108,12 @@ app.post('/marvel/registration', (req, res, next) => {
     })
     .catch((err) => next(err));
 });
+
+/* const upload = multer({ dest: 'public/images' });
+
+app.post('/marvel/upload', upload.single('file'), (req, res, next) => {
+
+}); */
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
