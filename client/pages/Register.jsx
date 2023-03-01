@@ -19,7 +19,18 @@ const Register = ({ onMount }) => {
       })
       .catch((error) => {
         console.error(error);
-        setErrorMessage('An error occurred while fetching data. Please try again later.');
+        if (error.response && error.response.status === 409) {
+          const data = error.response;
+          console.log('DATA', data);
+          if (data.status === 409) {
+            setErrorMessage(data.data.error);
+          } else {
+            setErrorMessage('An error occurred while fetching data. Please try again later.');
+          }
+        } else {
+          setErrorMessage('An error occurred while fetching data. Please try again later.');
+        }
+
       });
   };
 
