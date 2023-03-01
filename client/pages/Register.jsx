@@ -33,16 +33,19 @@ const Register = ({ onMount }) => {
     console.log('REGISTER BUTTON CLICKED', data);
 
     const apiUrl = 'http://localhost:3000/marvel/registration';
+
+    if (data.file) {
+      const formData = new FormData();
+      formData.append('image', data.file);
+      const uploadUrl = 'http://localhost:3000/marvel/upload';
+      axios.post(uploadUrl, formData)
+        .then((response) => console.log('SUCCESSFUL IMAGE POST'))
+        .catch((error) => console.error(error));
+    }
+
     axios.post(apiUrl, data)
       .then((response) => {
-        if (data.file) {
-          const formData = new FormData();
-          formData.append('image', data.file);
-          const uploadUrl = 'http://localhost:3000/marvel/upload';
-          axios.post(uploadUrl, formData)
-            .then((response) => console.log('SUCCESSFUL IMAGE POST'))
-            .catch((error) => console.error(error));
-        }
+        console.log('SUCCESSFUL POST');
       })
       .catch((error) => {
         console.error(error);
@@ -56,7 +59,6 @@ const Register = ({ onMount }) => {
         } else {
           setErrorMessage('An error occurred while fetching data. Please try again later.');
         }
-
       });
   };
 
@@ -152,7 +154,7 @@ const Register = ({ onMount }) => {
         <Controller
           name="file"
           control={control}
-          rules={{ required: true }}
+          rules={{ required: false }}
           render={({ field: { onChange } }) => (
             <FileInput onChange={(e) => onChange(e.target.files[0])} />
           )}
