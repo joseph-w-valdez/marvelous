@@ -30,17 +30,18 @@ const Register = ({ onMount }) => {
   };
 
   const handleRegistration = (data) => {
-    console.log(data);
+    console.log('REGISTER BUTTON CLICKED', data);
 
     const apiUrl = 'http://localhost:3000/marvel/registration';
     axios.post(apiUrl, data)
       .then((response) => {
-        console.log(response.data);
-        if (data.file && data.file[0]) {
+        if (data.file) {
           const formData = new FormData();
-          formData.append('file', data.file[0]);
+          formData.append('image', data.file);
           const uploadUrl = 'http://localhost:3000/marvel/upload';
-          axios.post(uploadUrl, formData);
+          axios.post(uploadUrl, formData)
+            .then((response) => console.log('SUCCESSFUL IMAGE POST'))
+            .catch((error) => console.error(error));
         }
       })
       .catch((error) => {
@@ -151,10 +152,12 @@ const Register = ({ onMount }) => {
         <Controller
           name="file"
           control={control}
+          rules={{ required: true }}
           render={({ field: { onChange } }) => (
-            <FileInput onChange={onChange} />
+            <FileInput onChange={(e) => onChange(e.target.files[0])} />
           )}
         />
+
         <div className='basis-full' />
         {/* <input
           type="file"

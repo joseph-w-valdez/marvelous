@@ -6,7 +6,7 @@ const errorMiddleware = require('./error-middleware');
 const axios = require('axios');
 const crypto = require('node:crypto');
 const path = require('path');
-const multer = require('multer');
+const uploadsMiddleware = require('./uploads-middleware');
 
 const pg = require('pg');
 const argon2 = require('argon2');
@@ -109,11 +109,12 @@ app.post('/marvel/registration', (req, res, next) => {
     .catch((err) => next(err));
 });
 
-/* const upload = multer({ dest: 'public/images' });
-
-app.post('/marvel/upload', upload.single('file'), (req, res, next) => {
-
-}); */
+app.post('/marvel/upload', uploadsMiddleware, (req, res, next) => {
+  console.log('UPLOAD HERE', req);
+  // Store filename, path, and mimetype in the database
+  // or perform any other operation you want with the uploaded file
+  res.status(200).send('File uploaded successfully');
+});
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
