@@ -51,20 +51,20 @@ app.get('/marvel/:characterName', (req, res, next) => {
 
       res.status(200).json(characterData);
     })
-    .catch(error => {
+    .catch((error) => {
       console.error(error);
       next(error);
     });
 });
 
-app.post('/marvel/sign-up', (req, res, next) => {
+app.post('/marvel/registration', (req, res, next) => {
   const { username, password, email } = req.body;
   if (!username || !password || !email) {
     throw new ClientError(400, 'username, password, and email are all required fields');
   }
   argon2
     .hash(password)
-    .then(passwordHash => {
+    .then((passwordHash) => {
       const sql = `
         insert into "users" ("username", "passwordHash", "email")
         values ($1, $2, $3)
@@ -73,11 +73,11 @@ app.post('/marvel/sign-up', (req, res, next) => {
       const params = [username, passwordHash, email];
       return db.query(sql, params);
     })
-    .then(result => {
+    .then((result) => {
       const [user] = result.rows;
       res.status(201).json(user);
     })
-    .catch(err => next(err));
+    .catch((err) => next(err));
 });
 
 app.get('*', (req, res) => {

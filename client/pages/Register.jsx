@@ -1,14 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '../components/Button';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
+const axios = require('axios');
 
 const Register = ({ onMount }) => {
+  const [errorMessage, setErrorMessage] = useState(undefined);
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
 
-  const onSubmit = (data) => {
+  const handleRegistration = (data) => {
     console.log(data);
+
+    const apiUrl = 'http://localhost:3000/marvel/registration';
+    axios.post(apiUrl, data)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+        setErrorMessage('An error occurred while fetching data. Please try again later.');
+      });
   };
 
   onMount();
@@ -17,7 +29,9 @@ const Register = ({ onMount }) => {
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
       <h1 className='text-4xl text-center mb-2'>REGISTER</h1>
       <div className='basis-full' />
-      <form className='text-center text-black' onSubmit={handleSubmit(onSubmit)}>
+      {errorMessage && <h1 className='text-red-700 bold'>{errorMessage}</h1>}
+      <div className='basis-full' />
+      <form className='text-center text-black' onSubmit={handleSubmit(handleRegistration)}>
         <input
           type="text"
           name='username'
