@@ -68,14 +68,19 @@ app.post('/marvel/registration', (req, res, next) => {
       const sql = `
         insert into "users" ("username", "passwordHash", "email")
         values ($1, $2, $3)
+        on conflict do nothing
         returning "id", "username", "email", "createdAt"
       `;
       const params = [username, passwordHash, email];
       return db.query(sql, params);
     })
     .then((result) => {
-      const [user] = result.rows;
-      res.status(201).json(user);
+      if (result.rowCount === 0) {
+        throw new ClientError(409, 'username or email already exists');
+      } else {
+        const [user] = result.rows;
+        res.status(201).json(user);
+      }
     })
     .catch((err) => next(err));
 });
