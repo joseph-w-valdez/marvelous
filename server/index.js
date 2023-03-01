@@ -65,6 +65,29 @@ app.post('/marvel/registration', (req, res, next) => {
   argon2
     .hash(password)
     .then((passwordHash) => {
+      const usernameSql = `
+        select "id", "username", "email", "createdAt" from "users" where "username" = $1 limit 1
+      `;
+      const usernameParams = [username];
+
+      const emailSql = `
+        select "id", "username", "email", "createdAt" from "users" where "email" = $1 limit 1
+      `;
+      const emailParams = [email];
+
+      return Promise.all([
+        db.query(usernameSql, usernameParams),
+        db.query(emailSql, emailParams),
+        argon2.hash(password)
+      ]);
+    })
+    .then(([usernameResult, emailResult, passwordHash]) => {
+      if (usernameResult.rows.length > 0) {
+        throw new ClientError(409, 'username already exists');
+      }
+      if (emailResult.rows.length > 0) {
+        throw new ClientError(409, 'email already exists');
+      }
       const sql = `
         insert into "users" ("username", "passwordHash", "email")
         values ($1, $2, $3)
