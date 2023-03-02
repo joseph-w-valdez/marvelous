@@ -2,27 +2,9 @@ import React, { useState } from 'react';
 import Button from '../components/Button';
 import { useForm, Controller } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
+
+import FileInput from '../components/FileInput';
 const axios = require('axios');
-
-const FileInput = ({ onChange }) => {
-  const handleOnChange = (e) => {
-    const file = e.target.files[0];
-    if (file && file.size <= 15 * 1024 * 1024) {
-      onChange(e);
-    } else {
-      alert('File size should be less than or equal to 15MB');
-    }
-  };
-
-  return (
-    <input
-      type="file"
-      onChange={handleOnChange}
-      accept=".png, .jpg, .jpeg, .gif"
-      className='text-white max-w-[250px]'
-    />
-  );
-};
 
 const handleRegistration = async (data, setErrorMessage) => {
   const apiUrl = 'http://localhost:3000/marvel/registration';
