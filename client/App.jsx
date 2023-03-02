@@ -6,6 +6,8 @@ import Navbar from './components/Navbar';
 
 import Home from './pages/Home';
 import Character from './pages/Character';
+import SignIn from './pages/SignIn';
+import Register from './pages/Register';
 
 function App() {
   const [characterData, setCharacterData] = useState(undefined);
@@ -17,8 +19,10 @@ function App() {
       <div className="mt-14">
         <SubNavbar text={subNavbarText} />
         <Routes>
-          <Route path="/" element={<Home setCharacterData={setCharacterData} onMount={() => setSubNavBarText('SEARCH')} />} />
-          <Route path="/character" element={<Character characterData={characterData} onMount={() => setSubNavBarText('CHARACTER')} />} />
+          <Route path="/" element={<Home onSearch={setCharacterData} onMount={() => setSubNavBarText('SEARCH')} />} />
+          <Route path="/character" element={<Character selectedCharacter={characterData} onMount={() => setSubNavBarText('CHARACTER')} />} />
+          <Route path="/sign-in" element={<SignIn onMount={() => setSubNavBarText('ACCOUNT')} />} />
+          <Route path="/register" element={<Register onMount={() => setSubNavBarText('ACCOUNT')} />} />
         </Routes>
       </div>
     </div>

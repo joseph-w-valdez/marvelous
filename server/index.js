@@ -5,6 +5,19 @@ const ClientError = require('./client-error');
 const errorMiddleware = require('./error-middleware');
 const axios = require('axios');
 const crypto = require('node:crypto');
+const path = require('path');
+const uploadsMiddleware = require('./uploads-middleware');
+
+const pg = require('pg');
+const argon2 = require('argon2');
+const jwt = require('jsonwebtoken');
+
+const db = new pg.Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 
 const app = express();
 
@@ -12,6 +25,7 @@ const API_PUBLIC_KEY = 'b8483fd7fba99cd20a9fefc4e5106f88';
 const API_PRIVATE_KEY = 'c2746ff73c66112e104538fe16622cbb21205d8f';
 
 app.use(staticMiddleware);
+app.use(express.json());
 
 app.get('/marvel/:characterName', (req, res, next) => {
 
@@ -38,10 +52,73 @@ app.get('/marvel/:characterName', (req, res, next) => {
 
       res.status(200).json(characterData);
     })
-    .catch(error => {
+    .catch((error) => {
       console.error(error);
       next(error);
     });
+});
+
+app.post('/marvel/registration', (req, res, next) => {
+  const { username, password, email, profilePictureUrl } = req.body;
+  if (!username || !password || !email) {
+    throw new ClientError(400, 'username, password, and email are all required fields');
+  }
+  argon2
+    .hash(password)
+    .then((passwordHash) => {
+      const usernameSql = `
+        select "id", "username", "email", "createdAt" from "users" where "username" = $1 limit 1
+      `;
+      const usernameParams = [username];
+
+      const emailSql = `
+        select "id", "username", "email", "createdAt" from "users" where "email" = $1 limit 1
+      `;
+      const emailParams = [email];
+
+      return Promise.all([
+        db.query(usernameSql, usernameParams),
+        db.query(emailSql, emailParams),
+        argon2.hash(password)
+      ]);
+    })
+    .then(([usernameResult, emailResult, passwordHash]) => {
+      if (usernameResult.rows.length > 0) {
+        throw new ClientError(409, 'username already exists');
+      }
+      if (emailResult.rows.length > 0) {
+        throw new ClientError(409, 'email already exists');
+      }
+      const sql = `
+    insert into "users" ("username", "passwordHash", "email", "profilePictureUrl")
+    values ($1, $2, $3, $4)
+    on conflict do nothing
+    returning "id", "username", "email", "createdAt", "profilePictureUrl"
+  `;
+      const params = [username, passwordHash, email, profilePictureUrl];
+      return db.query(sql, params);
+    })
+
+    .then((result) => {
+      if (result.rowCount === 0) {
+        throw new ClientError(409, 'username or email already exists');
+      } else {
+        const [user] = result.rows;
+        res.status(201).json(user);
+      }
+    })
+    .catch((err) => next(err));
+});
+
+app.post('/marvel/upload', uploadsMiddleware, (req, res, next) => {
+  console.log('UPLOAD HERE', req);
+  // Store filename, path, and mimetype in the database
+  // or perform any other operation you want with the uploaded file
+  res.status(200).send('File uploaded successfully');
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 app.use(errorMiddleware);
