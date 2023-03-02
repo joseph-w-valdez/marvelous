@@ -44,7 +44,7 @@ const Register = ({ onMount }) => {
       axios.post(uploadUrl, formData)
         .then((response) => {
           console.log('SUCCESSFUL IMAGE POST', response);
-          profilePictureUrl = `http://localhost:3000/server/public/images/${data.file.name}`;
+          profilePictureUrl = `http://localhost:3000/images/${data.file.name}`;
           console.log('THIS IS THE PATH', profilePictureUrl);
           data.profilePictureUrl = profilePictureUrl;
           console.log('BIG DATA', data);
