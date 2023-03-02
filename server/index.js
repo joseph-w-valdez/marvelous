@@ -6,6 +6,7 @@ const errorMiddleware = require('./error-middleware');
 const axios = require('axios');
 const crypto = require('node:crypto');
 const path = require('path');
+const uploadsMiddleware = require('./uploads-middleware');
 
 const pg = require('pg');
 const argon2 = require('argon2');
@@ -58,7 +59,7 @@ app.get('/marvel/:characterName', (req, res, next) => {
 });
 
 app.post('/marvel/registration', (req, res, next) => {
-  const { username, password, email } = req.body;
+  const { username, password, email, profilePictureUrl } = req.body;
   if (!username || !password || !email) {
     throw new ClientError(400, 'username, password, and email are all required fields');
   }
@@ -89,14 +90,15 @@ app.post('/marvel/registration', (req, res, next) => {
         throw new ClientError(409, 'email already exists');
       }
       const sql = `
-        insert into "users" ("username", "passwordHash", "email")
-        values ($1, $2, $3)
-        on conflict do nothing
-        returning "id", "username", "email", "createdAt"
-      `;
-      const params = [username, passwordHash, email];
+    insert into "users" ("username", "passwordHash", "email", "profilePictureUrl")
+    values ($1, $2, $3, $4)
+    on conflict do nothing
+    returning "id", "username", "email", "createdAt", "profilePictureUrl"
+  `;
+      const params = [username, passwordHash, email, profilePictureUrl];
       return db.query(sql, params);
     })
+
     .then((result) => {
       if (result.rowCount === 0) {
         throw new ClientError(409, 'username or email already exists');
@@ -106,6 +108,13 @@ app.post('/marvel/registration', (req, res, next) => {
       }
     })
     .catch((err) => next(err));
+});
+
+app.post('/marvel/upload', uploadsMiddleware, (req, res, next) => {
+  console.log('UPLOAD HERE', req);
+  // Store filename, path, and mimetype in the database
+  // or perform any other operation you want with the uploaded file
+  res.status(200).send('File uploaded successfully');
 });
 
 app.get('*', (req, res) => {

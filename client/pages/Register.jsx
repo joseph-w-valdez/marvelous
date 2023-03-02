@@ -1,37 +1,95 @@
 import React, { useState } from 'react';
 import Button from '../components/Button';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
+
 import { ErrorMessage } from '@hookform/error-message';
 const axios = require('axios');
+
+const FileInput = ({ onChange }) => {
+  const handleOnChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.size <= 15 * 1024 * 1024) {
+      onChange(e);
+    } else {
+      alert('File size should be less than or equal to 15MB');
+    }
+  };
+
+  return (
+    <input
+      type="file"
+      onChange={handleOnChange}
+      accept=".png, .jpg, .jpeg, .gif"
+      className='text-white max-w-[250px]'
+    />
+  );
+};
 
 const Register = ({ onMount }) => {
   const [errorMessage, setErrorMessage] = useState(undefined);
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const { control, register, handleSubmit, watch, formState: { errors } } = useForm();
 
   const handleRegistration = (data) => {
-    console.log(data);
+    console.log('REGISTER BUTTON CLICKED', data);
 
     const apiUrl = 'http://localhost:3000/marvel/registration';
-    axios.post(apiUrl, data)
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-        if (error.response && error.response.status === 409) {
-          const data = error.response;
-          console.log('DATA', data);
-          if (data.status === 409) {
-            setErrorMessage(data.data.error);
+    let profilePictureUrl = null;
+
+    if (data.file) {
+      console.log('THIS IS THE DATA.FILE', data.file);
+      const formData = new FormData();
+      formData.append('image', data.file);
+      const uploadUrl = 'http://localhost:3000/marvel/upload';
+      axios.post(uploadUrl, formData)
+        .then((response) => {
+          console.log('SUCCESSFUL IMAGE POST', response);
+          profilePictureUrl = `http://localhost:3000/images/${data.file.name}`;
+          console.log('THIS IS THE PATH', profilePictureUrl);
+          data.profilePictureUrl = profilePictureUrl;
+          console.log('BIG DATA', data);
+
+          // Call registration endpoint here
+          axios.post(apiUrl, { ...data, profilePictureUrl })
+            .then((response) => {
+              console.log('SUCCESSFUL POST', response);
+            })
+            .catch((error) => {
+              console.error(error);
+              if (error.response && error.response.status === 409) {
+                const data = error.response;
+                if (data.status === 409) {
+                  setErrorMessage(data.data.error);
+                } else {
+                  setErrorMessage('An error occurred while fetching data. Please try again later.');
+                }
+              } else {
+                setErrorMessage('An error occurred while fetching data. Please try again later.');
+              }
+            });
+        }
+        )
+        .catch((error) => console.error(error));
+    } else {
+      // Call registration endpoint here if no file is present
+      axios.post(apiUrl, data)
+        .then((response) => {
+          console.log('SUCCESSFUL POST', response);
+        })
+        .catch((error) => {
+          console.error(error);
+          if (error.response && error.response.status === 409) {
+            const data = error.response;
+            if (data.status === 409) {
+              setErrorMessage(data.data.error);
+            } else {
+              setErrorMessage('An error occurred while fetching data. Please try again later.');
+            }
           } else {
             setErrorMessage('An error occurred while fetching data. Please try again later.');
           }
-        } else {
-          setErrorMessage('An error occurred while fetching data. Please try again later.');
-        }
-
-      });
+        });
+    }
   };
 
   onMount();
@@ -122,14 +180,18 @@ const Register = ({ onMount }) => {
           name="passwordVerification"
           render={({ message }) => <p className="text-red-500 mt-2">{message}</p>}
         />
-        <div className='basis-full' />
-        <input
-          type="file"
-          name='file'
-          className='w-72 h-9 px-3 mt-3 text-white'
-          accept=".png, .jpg, .jpeg, .gif"
+        <div className='basis-full mb-3' />
+        <Controller
+          name="file"
+          control={control}
+          rules={{ required: false }}
+          render={({ field: { onChange } }) => (
+            <FileInput onChange={(e) => onChange(e.target.files[0])} />
+          )}
         />
+
         <div className='basis-full' />
+
         <Button text='Sign Up' />
       </form>
       <div className='basis-full' />
