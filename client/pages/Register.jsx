@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import Button from '../components/Button';
 import { useForm, Controller } from 'react-hook-form';
-import { ErrorMessage } from '@hookform/error-message';
 
+import Button from '../components/Button';
+import InputField from '../components/InputField';
 import FileInput from '../components/FileInput';
 import handleRegistration from '../components/handleRegistration';
 
@@ -12,6 +12,38 @@ const Register = ({ onMount }) => {
 
   onMount();
 
+  const usernameValidation = {
+    required: true,
+    maxLength: { value: 20, message: 'username cannot be more than 20 characters' }
+  };
+
+  const emailValidation = {
+    required: true,
+    pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'must be a valid email address' }
+  };
+
+  const emailVerificationValidation = {
+    required: true,
+    validate: (value) => value === watch('email') || 'emails do not match'
+  };
+
+  const passwordValidation = {
+    required: true,
+    minLength: { value: 8, message: 'must be at least 8 characters long' },
+    maxLength: { value: 25, message: 'cannot be more than 25 characters long' },
+    validate: {
+      uppercase: (value) => /(?=.*[A-Z])/.test(value) || 'must contain at least one uppercase letter',
+      lowercase: (value) => /(?=.*[a-z])/.test(value) || 'must contain at least one lowercase letter',
+      number: (value) => /(?=.*\d)/.test(value) || 'must contain at least one number',
+      special: (value) => /(?=.*[@#$%^&+=!])/.test(value) || 'must contain at least one special character'
+    }
+  };
+
+  const passwordVerificationValidation = {
+    required: true,
+    validate: (value) => value === watch('password') || 'passwords do not match'
+  };
+
   return (
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
       <h1 className='text-4xl text-center mb-2'>REGISTER</h1>
@@ -19,97 +51,18 @@ const Register = ({ onMount }) => {
       {errorMessage && <h1 className='text-red-700 bold'>{errorMessage}</h1>}
       <div className='basis-full' />
       <form className='text-center text-black' onSubmit={handleSubmit(() => handleRegistration(watch(), setErrorMessage))}>
-        <input
-          type="text"
-          name='username'
-          {...register('username', { required: true, maxLength: { value: 20, message: 'username cannot be more than 20 characters' } })}
-          placeholder='Username'
-          className='w-72 h-9 rounded px-3 mt-3'
-        />
+        <InputField name="username" register={register} errors={errors} options={{ placeholder: 'Username', validation: usernameValidation }} />
         <div className='basis-full' />
-        <input
-          type="email"
-          name='email'
-          {...register('email', {
-            required: true,
-            pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-          })}
-          placeholder='Email'
-          className='w-72 h-9 rounded px-3 mt-3'
-        />
+        <InputField name="email" register={register} errors={errors} options={{ placeholder: 'Email', validation: emailValidation }} />
         <div className='basis-full' />
-        <input
-          type="email"
-          name='emailVerification'
-          {...register('emailVerification', {
-            required: true,
-            validate: (value) => value === watch('email') || 'emails do not match'
-          })}
-          placeholder='Verify Email'
-          className='w-72 h-9 rounded px-3 mt-3'
-        />
-        <ErrorMessage
-          errors={errors}
-          name="emailVerification"
-          render={({ message }) => <p className="text-red-500 mt-2">{message}</p>}
-        />
+        <InputField name="emailVerification" register={register} control={control} errors={errors} options={{ type: 'email', placeholder: 'Verify Email', validation: emailVerificationValidation }} />
         <div className='basis-full' />
-        <input
-          type="password"
-          name='password'
-          {...register('password', {
-            required: true,
-            minLength: {
-              value: 8,
-              message: 'must be at least 8 characters long'
-            },
-            maxLength: {
-              value: 25,
-              message: 'cannot be more than 25 characters long'
-            },
-            validate: {
-              uppercase: (value) => /(?=.*[A-Z])/.test(value) || 'must contain at least one uppercase letter',
-              lowercase: (value) => /(?=.*[a-z])/.test(value) || 'must contain at least one lowercase letter',
-              number: (value) => /(?=.*\d)/.test(value) || 'must contain at least one number',
-              special: (value) => /(?=.*[@#$%^&+=!])/.test(value) || 'must contain at least one special character'
-            }
-          })}
-          placeholder='Password'
-          className='w-72 h-9 rounded px-3 mt-3'
-        />
-        <ErrorMessage
-          errors={errors}
-          name="password"
-          render={({ message }) => <p className="text-red-500 mt-2">{message}</p>}
-        />
+        <InputField name="password" register={register} control={control} errors={errors} options={{ type: 'password', placeholder: 'Password', validation: passwordValidation }} />
         <div className='basis-full' />
-        <input
-          type="password"
-          name='passwordVerification'
-          {...register('passwordVerification', {
-            required: true,
-            validate: (value) => value === watch('password') || 'passwords do not match'
-          })}
-          placeholder='Verify Password'
-          className='w-72 h-9 rounded px-3 mt-3'
-        />
-        <ErrorMessage
-          errors={errors}
-          name="passwordVerification"
-          render={({ message }) => <p className="text-red-500 mt-2">{message}</p>}
-        />
+        <InputField name="passwordVerification" register={register} control={control} errors={errors} options={{ type: 'password', placeholder: 'Verify Password', validation: passwordVerificationValidation }} />
         <div className='basis-full mb-3' />
-        <Controller
-          name="file"
-          control={control}
-          rules={{ required: false }}
-          render={({ field: { onChange } }) => (
-            <FileInput onChange={(e) => onChange(e.target.files[0])} />
-          )}
-        />
-
+        <Controller name="file" control={control} rules={{ required: false }} render={({ field: { onChange } }) => (<FileInput onChange={(e) => onChange(e.target.files[0])} />)} />
         <div className='basis-full' />
-
         <Button text='Sign Up' />
       </form>
       <div className='basis-full' />
