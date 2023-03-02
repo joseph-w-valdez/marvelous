@@ -33,7 +33,7 @@ const SignIn = ({ onMount }) => {
         <Button text='SIGN IN' type="submit"/>
       </form>
       <div className='basis-full' />
-      <Link to='/register'><p className='text-blue-500 underline text-sm'>Don&apos;t have an account? click Here!</p></Link>
+      <Link to='/register'><p className='text-blue-500 underline text-sm'>Don&apos;t have an account? click here!</p></Link>
     </div>
   );
 };
