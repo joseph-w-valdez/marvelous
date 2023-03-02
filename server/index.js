@@ -59,7 +59,7 @@ app.get('/marvel/:characterName', (req, res, next) => {
 });
 
 app.post('/marvel/registration', (req, res, next) => {
-  const { username, password, email } = req.body;
+  const { username, password, email, profilePictureUrl } = req.body;
   if (!username || !password || !email) {
     throw new ClientError(400, 'username, password, and email are all required fields');
   }
@@ -90,14 +90,15 @@ app.post('/marvel/registration', (req, res, next) => {
         throw new ClientError(409, 'email already exists');
       }
       const sql = `
-        insert into "users" ("username", "passwordHash", "email")
-        values ($1, $2, $3)
-        on conflict do nothing
-        returning "id", "username", "email", "createdAt"
-      `;
-      const params = [username, passwordHash, email];
+    insert into "users" ("username", "passwordHash", "email", "profilePictureUrl")
+    values ($1, $2, $3, $4)
+    on conflict do nothing
+    returning "id", "username", "email", "createdAt", "profilePictureUrl"
+  `;
+      const params = [username, passwordHash, email, profilePictureUrl];
       return db.query(sql, params);
     })
+
     .then((result) => {
       if (result.rowCount === 0) {
         throw new ClientError(409, 'username or email already exists');

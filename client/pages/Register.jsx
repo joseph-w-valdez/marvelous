@@ -34,33 +34,62 @@ const Register = ({ onMount }) => {
     console.log('REGISTER BUTTON CLICKED', data);
 
     const apiUrl = 'http://localhost:3000/marvel/registration';
+    let profilePictureUrl = null;
 
     if (data.file) {
+      console.log('THIS IS THE DATA.FILE', data.file);
       const formData = new FormData();
       formData.append('image', data.file);
       const uploadUrl = 'http://localhost:3000/marvel/upload';
       axios.post(uploadUrl, formData)
-        .then((response) => console.log('SUCCESSFUL IMAGE POST'))
-        .catch((error) => console.error(error));
-    }
+        .then((response) => {
+          console.log('SUCCESSFUL IMAGE POST', response);
+          profilePictureUrl = `http://localhost:3000/server/public/images/${data.file.name}`;
+          console.log('THIS IS THE PATH', profilePictureUrl);
+          data.profilePictureUrl = profilePictureUrl;
+          console.log('BIG DATA', data);
 
-    axios.post(apiUrl, data)
-      .then((response) => {
-        console.log('SUCCESSFUL POST');
-      })
-      .catch((error) => {
-        console.error(error);
-        if (error.response && error.response.status === 409) {
-          const data = error.response;
-          if (data.status === 409) {
-            setErrorMessage(data.data.error);
+          // Call registration endpoint here
+          axios.post(apiUrl, { ...data, profilePictureUrl })
+            .then((response) => {
+              console.log('SUCCESSFUL POST', response);
+            })
+            .catch((error) => {
+              console.error(error);
+              if (error.response && error.response.status === 409) {
+                const data = error.response;
+                if (data.status === 409) {
+                  setErrorMessage(data.data.error);
+                } else {
+                  setErrorMessage('An error occurred while fetching data. Please try again later.');
+                }
+              } else {
+                setErrorMessage('An error occurred while fetching data. Please try again later.');
+              }
+            });
+        }
+        )
+        .catch((error) => console.error(error));
+    } else {
+      // Call registration endpoint here if no file is present
+      axios.post(apiUrl, data)
+        .then((response) => {
+          console.log('SUCCESSFUL POST', response);
+        })
+        .catch((error) => {
+          console.error(error);
+          if (error.response && error.response.status === 409) {
+            const data = error.response;
+            if (data.status === 409) {
+              setErrorMessage(data.data.error);
+            } else {
+              setErrorMessage('An error occurred while fetching data. Please try again later.');
+            }
           } else {
             setErrorMessage('An error occurred while fetching data. Please try again later.');
           }
-        } else {
-          setErrorMessage('An error occurred while fetching data. Please try again later.');
-        }
-      });
+        });
+    }
   };
 
   onMount();
