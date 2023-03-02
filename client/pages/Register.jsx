@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
+// Import custom components for rendering form fields
 import Button from '../components/Button';
 import InputField from '../components/InputField';
 import FileInput from '../components/FileInput';
+// Import custom function for handling user registration
 import handleRegistration from '../components/handleRegistration';
+// Import custom validation functions
 import { usernameValidation, emailValidation, passwordValidation } from '../components/validation';
 
 const Register = ({ onMount }) => {
@@ -14,7 +17,7 @@ const Register = ({ onMount }) => {
   const { control, register, handleSubmit, watch, formState: { errors } } = useForm();
   const navigate = useNavigate();
 
-  onMount();
+  onMount(); // Call the onMount function passed as a prop, which sets the subnavbar text
 
   const onSubmit = async (data) => {
     try {
@@ -25,11 +28,12 @@ const Register = ({ onMount }) => {
     }
   };
 
+  // Use useEffect hook to handle redirect after successful registration
   useEffect(() => {
     let timeout;
     if (successMessage) {
       timeout = setTimeout(() => {
-        navigate('/sign-in', { state: { message: 'Account created successfully. Please sign in.' } });
+        navigate('/sign-in', { state: { message: 'Account created successfully. Please sign in.' } }); // Navigate to sign-in page after 5 seconds
       }, 5000);
     }
     return () => clearTimeout(timeout);
@@ -39,6 +43,7 @@ const Register = ({ onMount }) => {
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
       <h1 className='text-4xl text-center mb-2'>REGISTER</h1>
       <div className='basis-full' />
+      {/* if there is an error, the error is shown; if the form has been submitted successfully, show the success message and hide the form */}
       {errorMessage && <h1 className='text-red-700 bold'>{errorMessage}</h1>}
       {successMessage && <h1 className='text-blue-300 bold'>{successMessage} <a href="/sign-in" className='text-blue-500 underline'>here</a></h1>}
       <div className='basis-full' />
