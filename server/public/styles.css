@@ -575,10 +575,6 @@ video {
   margin: 2rem;
 }
 
-.m-6 {
-  margin: 1.5rem;
-}
-
 .m-4 {
   margin: 1rem;
 }
@@ -684,14 +680,6 @@ video {
 
 .max-w-sm {
   max-width: 24rem;
-}
-
-.max-w-xs {
-  max-width: 20rem;
-}
-
-.max-w-0 {
-  max-width: 0rem;
 }
 
 .max-w-\[250px\] {
