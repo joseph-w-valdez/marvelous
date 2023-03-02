@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,6 +10,7 @@ import { usernameValidation, emailValidation, passwordValidation } from '../comp
 
 const Register = ({ onMount }) => {
   const [errorMessage, setErrorMessage] = useState(undefined);
+  const [successMessage, setSuccessMessage] = useState(undefined);
   const { control, register, handleSubmit, watch, formState: { errors } } = useForm();
   const navigate = useNavigate();
 
@@ -18,17 +19,28 @@ const Register = ({ onMount }) => {
   const onSubmit = async (data) => {
     try {
       await handleRegistration(data, setErrorMessage);
-      navigate('/sign-in', { state: { message: 'Account created successfully. Please sign in.' } });
+      setSuccessMessage('Account created successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click here to go to the sign-in page.');
     } catch (error) {
       setErrorMessage(error.message);
     }
   };
+
+  useEffect(() => {
+    let timeout;
+    if (successMessage) {
+      timeout = setTimeout(() => {
+        navigate('/sign-in', { state: { message: 'Account created successfully. Please sign in.' } });
+      }, 5000);
+    }
+    return () => clearTimeout(timeout);
+  }, [successMessage, navigate]);
 
   return (
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
       <h1 className='text-4xl text-center mb-2'>REGISTER</h1>
       <div className='basis-full' />
       {errorMessage && <h1 className='text-red-700 bold'>{errorMessage}</h1>}
+      {successMessage && <h1 className='text-blue-300 bold'>{successMessage} <a href="/sign-in" className='text-blue-500 underline'>here</a></h1>}
       <div className='basis-full' />
       <form className='text-center text-black' onSubmit={handleSubmit(onSubmit)}>
         <InputField name="username" register={register} errors={errors} options={{ placeholder: 'Username', validation: usernameValidation }} />
