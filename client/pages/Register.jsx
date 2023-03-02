@@ -20,6 +20,7 @@ const FileInput = ({ onChange }) => {
       type="file"
       onChange={handleOnChange}
       accept=".png, .jpg, .jpeg, .gif"
+      className='text-white max-w-[250px]'
     />
   );
 };
@@ -150,7 +151,7 @@ const Register = ({ onMount }) => {
           name="passwordVerification"
           render={({ message }) => <p className="text-red-500 mt-2">{message}</p>}
         />
-        <div className='basis-full' />
+        <div className='basis-full mb-3' />
         <Controller
           name="file"
           control={control}
