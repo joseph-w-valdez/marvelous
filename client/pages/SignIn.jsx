@@ -39,7 +39,17 @@ const SignIn = ({ onMount }) => {
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
       <h1 className='text-4xl text-center mb-2'>SIGN IN</h1>
       <div className='basis-full' />
-      {successMessage && <h1 className='text-blue-300 bold'>{successMessage} <a href="/sign-in" className='text-blue-500 underline'>here</a></h1>}
+      {successMessage && (
+        <h1 className='text-blue-300 bold'>
+          {successMessage}
+          <span
+            className='text-blue-500 underline cursor-pointer'
+            onClick={() => navigate('/')}
+          >
+            here
+          </span>
+        </h1>
+      )}
       {!successMessage && (
         <>
           <form className='text-center text-black' onSubmit={handleSignIn}>
@@ -65,8 +75,8 @@ const SignIn = ({ onMount }) => {
           </form>
           <div className='basis-full' />
           <Link to='/register'><p className='text-blue-500 underline text-sm'>Don&apos;t have an account? click here!</p></Link>
-        </>)
-      }
+        </>
+      )}
     </div>
   );
 };
