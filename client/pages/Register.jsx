@@ -1,96 +1,15 @@
 import React, { useState } from 'react';
-import Button from '../components/Button';
 import { useForm, Controller } from 'react-hook-form';
 
-import { ErrorMessage } from '@hookform/error-message';
-const axios = require('axios');
-
-const FileInput = ({ onChange }) => {
-  const handleOnChange = (e) => {
-    const file = e.target.files[0];
-    if (file && file.size <= 15 * 1024 * 1024) {
-      onChange(e);
-    } else {
-      alert('File size should be less than or equal to 15MB');
-    }
-  };
-
-  return (
-    <input
-      type="file"
-      onChange={handleOnChange}
-      accept=".png, .jpg, .jpeg, .gif"
-      className='text-white max-w-[250px]'
-    />
-  );
-};
+import Button from '../components/Button';
+import InputField from '../components/InputField';
+import FileInput from '../components/FileInput';
+import handleRegistration from '../components/handleRegistration';
+import { usernameValidation, emailValidation, passwordValidation } from '../components/validation';
 
 const Register = ({ onMount }) => {
   const [errorMessage, setErrorMessage] = useState(undefined);
-
   const { control, register, handleSubmit, watch, formState: { errors } } = useForm();
-
-  const handleRegistration = (data) => {
-    console.log('REGISTER BUTTON CLICKED', data);
-
-    const apiUrl = 'http://localhost:3000/marvel/registration';
-    let profilePictureUrl = null;
-
-    if (data.file) {
-      console.log('THIS IS THE DATA.FILE', data.file);
-      const formData = new FormData();
-      formData.append('image', data.file);
-      const uploadUrl = 'http://localhost:3000/marvel/upload';
-      axios.post(uploadUrl, formData)
-        .then((response) => {
-          console.log('SUCCESSFUL IMAGE POST', response);
-          profilePictureUrl = `http://localhost:3000/images/${data.file.name}`;
-          console.log('THIS IS THE PATH', profilePictureUrl);
-          data.profilePictureUrl = profilePictureUrl;
-          console.log('BIG DATA', data);
-
-          // Call registration endpoint here
-          axios.post(apiUrl, { ...data, profilePictureUrl })
-            .then((response) => {
-              console.log('SUCCESSFUL POST', response);
-            })
-            .catch((error) => {
-              console.error(error);
-              if (error.response && error.response.status === 409) {
-                const data = error.response;
-                if (data.status === 409) {
-                  setErrorMessage(data.data.error);
-                } else {
-                  setErrorMessage('An error occurred while fetching data. Please try again later.');
-                }
-              } else {
-                setErrorMessage('An error occurred while fetching data. Please try again later.');
-              }
-            });
-        }
-        )
-        .catch((error) => console.error(error));
-    } else {
-      // Call registration endpoint here if no file is present
-      axios.post(apiUrl, data)
-        .then((response) => {
-          console.log('SUCCESSFUL POST', response);
-        })
-        .catch((error) => {
-          console.error(error);
-          if (error.response && error.response.status === 409) {
-            const data = error.response;
-            if (data.status === 409) {
-              setErrorMessage(data.data.error);
-            } else {
-              setErrorMessage('An error occurred while fetching data. Please try again later.');
-            }
-          } else {
-            setErrorMessage('An error occurred while fetching data. Please try again later.');
-          }
-        });
-    }
-  };
 
   onMount();
 
@@ -100,98 +19,19 @@ const Register = ({ onMount }) => {
       <div className='basis-full' />
       {errorMessage && <h1 className='text-red-700 bold'>{errorMessage}</h1>}
       <div className='basis-full' />
-      <form className='text-center text-black' onSubmit={handleSubmit(handleRegistration)}>
-        <input
-          type="text"
-          name='username'
-          {...register('username', { required: true, maxLength: { value: 20, message: 'username cannot be more than 20 characters' } })}
-          placeholder='Username'
-          className='w-72 h-9 rounded px-3 mt-3'
-        />
+      <form className='text-center text-black' onSubmit={handleSubmit(() => handleRegistration(watch(), setErrorMessage))}>
+        <InputField name="username" register={register} errors={errors} options={{ placeholder: 'Username', validation: usernameValidation }} />
         <div className='basis-full' />
-        <input
-          type="email"
-          name='email'
-          {...register('email', {
-            required: true,
-            pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-          })}
-          placeholder='Email'
-          className='w-72 h-9 rounded px-3 mt-3'
-        />
+        <InputField name="email" register={register} errors={errors} options={{ placeholder: 'Email', validation: emailValidation }} />
         <div className='basis-full' />
-        <input
-          type="email"
-          name='emailVerification'
-          {...register('emailVerification', {
-            required: true,
-            validate: (value) => value === watch('email') || 'emails do not match'
-          })}
-          placeholder='Verify Email'
-          className='w-72 h-9 rounded px-3 mt-3'
-        />
-        <ErrorMessage
-          errors={errors}
-          name="emailVerification"
-          render={({ message }) => <p className="text-red-500 mt-2">{message}</p>}
-        />
+        <InputField name="emailVerification" register={register} control={control} errors={errors} options={{ type: 'email', placeholder: 'Verify Email', validation: { required: true, validate: (value) => value === watch('email') || 'emails do not match' } }} />
         <div className='basis-full' />
-        <input
-          type="password"
-          name='password'
-          {...register('password', {
-            required: true,
-            minLength: {
-              value: 8,
-              message: 'must be at least 8 characters long'
-            },
-            maxLength: {
-              value: 25,
-              message: 'cannot be more than 25 characters long'
-            },
-            validate: {
-              uppercase: (value) => /(?=.*[A-Z])/.test(value) || 'must contain at least one uppercase letter',
-              lowercase: (value) => /(?=.*[a-z])/.test(value) || 'must contain at least one lowercase letter',
-              number: (value) => /(?=.*\d)/.test(value) || 'must contain at least one number',
-              special: (value) => /(?=.*[@#$%^&+=!])/.test(value) || 'must contain at least one special character'
-            }
-          })}
-          placeholder='Password'
-          className='w-72 h-9 rounded px-3 mt-3'
-        />
-        <ErrorMessage
-          errors={errors}
-          name="password"
-          render={({ message }) => <p className="text-red-500 mt-2">{message}</p>}
-        />
+        <InputField name="password" register={register} control={control} errors={errors} options={{ type: 'password', placeholder: 'Password', validation: passwordValidation }} />
         <div className='basis-full' />
-        <input
-          type="password"
-          name='passwordVerification'
-          {...register('passwordVerification', {
-            required: true,
-            validate: (value) => value === watch('password') || 'passwords do not match'
-          })}
-          placeholder='Verify Password'
-          className='w-72 h-9 rounded px-3 mt-3'
-        />
-        <ErrorMessage
-          errors={errors}
-          name="passwordVerification"
-          render={({ message }) => <p className="text-red-500 mt-2">{message}</p>}
-        />
+        <InputField name="passwordVerification" register={register} control={control} errors={errors} options={{ type: 'password', placeholder: 'Verify Password', validation: { required: true, validate: (value) => value === watch('password') || 'passwords do not match' } }} />
         <div className='basis-full mb-3' />
-        <Controller
-          name="file"
-          control={control}
-          rules={{ required: false }}
-          render={({ field: { onChange } }) => (
-            <FileInput onChange={(e) => onChange(e.target.files[0])} />
-          )}
-        />
-
+        <Controller name="file" control={control} rules={{ required: false }} render={({ field: { onChange } }) => (<FileInput onChange={(e) => onChange(e.target.files[0])} />)} />
         <div className='basis-full' />
-
         <Button text='Sign Up' />
       </form>
       <div className='basis-full' />
