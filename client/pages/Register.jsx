@@ -19,7 +19,7 @@ const Register = ({ onMount }) => {
   const onSubmit = async (data) => {
     try {
       await handleRegistration(data, setErrorMessage);
-      setSuccessMessage('Account created successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click here to go to the sign-in page.');
+      setSuccessMessage('Account created successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
     } catch (error) {
       setErrorMessage(error.message);
     }
