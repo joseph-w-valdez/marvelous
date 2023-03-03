@@ -28,7 +28,7 @@ const API_PRIVATE_KEY = 'c2746ff73c66112e104538fe16622cbb21205d8f';
 app.use(staticMiddleware);
 app.use(express.json());
 
-app.get('/marvel/:characterName', (req, res, next) => {
+app.get('/marvel/character/:characterName', (req, res, next) => {
 
   const timestamp = Date.now().toString();
   const hash = crypto.createHash('md5').update(timestamp + API_PRIVATE_KEY + API_PUBLIC_KEY).digest('hex');
@@ -146,6 +146,7 @@ app.post('/marvel/sign-in', (req, res, next) => {
             throw new ClientError(401, 'invalid login');
           }
           const token = jwt.sign({ userId: id }, process.env.TOKEN_SECRET);
+          console.log('THIS IS THE TOKEN', token);
           res.status(200).json({ token });
         });
     })
@@ -155,10 +156,26 @@ app.post('/marvel/sign-in', (req, res, next) => {
     });
 });
 
-app.use(authorizationMiddleware);
-
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
+});
+
+app.use(authorizationMiddleware);
+
+app.post('/marvel/auth-test', (req, res, next) => {
+  console.log('AUTH TESTED');
+  res.status(200).json({
+    message: 'You are authorized!',
+    user: req.user // this should contain the decoded user object from the token
+  });
+});
+
+app.post('/marvel/sign-out', (req, res, next) => {
+  console.log('SIGNED OUT');
+  res.clearCookie('token');
+  res.status(200).json({
+    message: 'You have been signed out'
+  });
 });
 
 app.use(errorMiddleware);

@@ -14,14 +14,16 @@ const SignIn = ({ onMount }) => {
   const handleSignIn = (e) => {
     e.preventDefault();
     const apiUrl = 'http://localhost:3000/marvel/sign-in';
-    console.log('SIGN IN SUBMIT WAS PRESSED');
     const data = {
       username: usernameInputValue,
       password: passwordInputvalue
     };
-    console.log('THIS IS DATA', data);
     axios.post(apiUrl, data)
-      .then((res) => setSuccessMessage('Signed-in successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click '))
+      .then((res) => {
+        console.log('res', res);
+        localStorage.setItem('authToken', res.data.token);
+        setSuccessMessage('Signed-in successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
+      })
       .catch((err) => console.error(err));
   };
 
