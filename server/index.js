@@ -7,6 +7,7 @@ const axios = require('axios');
 const crypto = require('node:crypto');
 const path = require('path');
 const uploadsMiddleware = require('./uploads-middleware');
+const authorizationMiddleware = require('./authorization-middleware');
 
 const pg = require('pg');
 const argon2 = require('argon2');
@@ -79,10 +80,11 @@ app.post('/marvel/registration', (req, res, next) => {
       return Promise.all([
         db.query(usernameSql, usernameParams),
         db.query(emailSql, emailParams),
-        argon2.hash(password)
+        Promise.resolve(passwordHash)
       ]);
     })
     .then(([usernameResult, emailResult, passwordHash]) => {
+      console.log('passwordHash', passwordHash, 'end');
       if (usernameResult.rows.length > 0) {
         throw new ClientError(409, 'username already exists');
       }
@@ -112,10 +114,48 @@ app.post('/marvel/registration', (req, res, next) => {
 
 app.post('/marvel/upload', uploadsMiddleware, (req, res, next) => {
   console.log('UPLOAD HERE', req);
-  // Store filename, path, and mimetype in the database
-  // or perform any other operation you want with the uploaded file
   res.status(200).send('File uploaded successfully');
 });
+
+app.post('/marvel/sign-in', (req, res, next) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    throw new ClientError(401, 'invalid login');
+  }
+  const sql = `
+    select "id",
+           "passwordHash"
+      from "users"
+     where "username" = $1
+  `;
+
+  const params = [username];
+  db.query(sql, params)
+    .then((result) => {
+      const [user] = result.rows;
+      if (!user) {
+        throw new ClientError(401, 'invalid login');
+      }
+      const { id, passwordHash } = user;
+      console.log('id', id, 'passwordHash', passwordHash, 'password', password);
+      return argon2
+        .verify(passwordHash, password)
+        .then((isMatching) => {
+          console.log('isMatching', isMatching);
+          if (!isMatching) {
+            throw new ClientError(401, 'invalid login');
+          }
+          const token = jwt.sign({ userId: id }, process.env.TOKEN_SECRET);
+          res.status(200).json({ token });
+        });
+    })
+    .catch((err) => {
+      console.log('argon2.verify error', err);
+      next(err);
+    });
+});
+
+app.use(authorizationMiddleware);
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));

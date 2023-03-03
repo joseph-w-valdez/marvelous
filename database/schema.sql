@@ -8,18 +8,18 @@ create schema "public";
 
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
-  "username" VARCHAR(255) UNIQUE NOT NULL,
+  "username" TEXT UNIQUE NOT NULL,
   email CHAR(60) unique NOT NULL,
-  "passwordHash" CHAR(255) NOT NULL,
-  "profilePictureUrl" VARCHAR(255),
+  "passwordHash" TEXT NOT NULL,
+  "profilePictureUrl" TEXT,
   "createdAt" timestamptz(6) not null default now()
 );
 
 CREATE TABLE characters (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
+  name TEXT NOT NULL,
   description TEXT NOT NULL,
-  "imageUrl" VARCHAR(255) NOT NULL,
+  "imageUrl" TEXT NOT NULL,
   "comicAppearances" INT NOT NULL
 );
 
