@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Button from '../components/Button';
 import { Link, useNavigate } from 'react-router-dom';
+
+import { UserContext } from '../contexts/UserContext';
 const axios = require('axios');
 
 const SignIn = ({ onMount }) => {
@@ -9,7 +11,8 @@ const SignIn = ({ onMount }) => {
   const [successMessage, setSuccessMessage] = useState(undefined);
   onMount();
 
-  const navigate = useNavigate(); // move this inside the component
+  const navigate = useNavigate();
+  const { setUserId, setProfilePictureUrl } = useContext(UserContext);
 
   const handleSignIn = (e) => {
     e.preventDefault();
@@ -20,7 +23,8 @@ const SignIn = ({ onMount }) => {
     };
     axios.post(apiUrl, data)
       .then((res) => {
-        console.log('res', res);
+        setUserId(data.username);
+        setProfilePictureUrl(res.data.profilePictureUrl);
         localStorage.setItem('authToken', res.data.token);
         setSuccessMessage('Signed-in successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
       })

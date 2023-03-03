@@ -124,7 +124,8 @@ app.post('/marvel/sign-in', (req, res, next) => {
   }
   const sql = `
     select "id",
-           "passwordHash"
+           "passwordHash",
+           "profilePictureUrl"
       from "users"
      where "username" = $1
   `;
@@ -136,18 +137,15 @@ app.post('/marvel/sign-in', (req, res, next) => {
       if (!user) {
         throw new ClientError(401, 'invalid login');
       }
-      const { id, passwordHash } = user;
-      console.log('id', id, 'passwordHash', passwordHash, 'password', password);
+      const { id, passwordHash, profilePictureUrl } = user;
       return argon2
         .verify(passwordHash, password)
         .then((isMatching) => {
-          console.log('isMatching', isMatching);
           if (!isMatching) {
             throw new ClientError(401, 'invalid login');
           }
           const token = jwt.sign({ userId: id }, process.env.TOKEN_SECRET);
-          console.log('THIS IS THE TOKEN', token);
-          res.status(200).json({ token });
+          res.status(200).json({ token, profilePictureUrl });
         });
     })
     .catch((err) => {
