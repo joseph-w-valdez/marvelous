@@ -12,7 +12,7 @@ const SignIn = ({ onMount }) => {
   onMount();
 
   const navigate = useNavigate();
-  const { setUserId, setProfilePictureUrl } = useContext(UserContext);
+  const { setUsername, setProfilePictureUrl } = useContext(UserContext);
 
   const handleSignIn = (e) => {
     e.preventDefault();
@@ -23,7 +23,7 @@ const SignIn = ({ onMount }) => {
     };
     axios.post(apiUrl, data)
       .then((res) => {
-        setUserId(data.username);
+        setUsername(data.username);
         setProfilePictureUrl(res.data.profilePictureUrl);
         localStorage.setItem('authToken', res.data.token);
         setSuccessMessage('Signed-in successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
