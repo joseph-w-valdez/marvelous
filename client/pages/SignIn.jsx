@@ -41,6 +41,18 @@ const SignIn = ({ onMount }) => {
     return () => clearTimeout(timeout);
   }, [successMessage, navigate]);
 
+  const handleDemo = () => {
+    const apiUrl = 'http://localhost:3000/marvel/demo';
+    axios.post(apiUrl)
+      .then((res) => {
+        setUsername(res.data.username);
+        setProfilePictureUrl(res.data.profilePictureUrl);
+        localStorage.setItem('authToken', res.data.token);
+        setSuccessMessage('Signed-in successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
+      })
+      .catch((err) => console.error(err));
+  };
+
   return (
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
       <h1 className='text-4xl text-center mb-2'>SIGN IN</h1>
@@ -81,6 +93,7 @@ const SignIn = ({ onMount }) => {
           </form>
           <div className='basis-full' />
           <Link to='/register'><p className='text-blue-500 underline text-sm'>Don&apos;t have an account? click here!</p></Link>
+          <Button text='DEMO BUTTON' type="button" onClick={handleDemo} color='red-500'/>
         </>
       )}
     </div>

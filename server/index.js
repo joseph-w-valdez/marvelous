@@ -154,16 +154,54 @@ app.post('/marvel/sign-in', (req, res, next) => {
     });
 });
 
+app.post('/marvel/demo', (req, res, next) => {
+
+  const username = 'didyouknow';
+  const password = 'Vaporeon!1';
+
+  const sql = `
+    select "id",
+           "passwordHash",
+           "profilePictureUrl",
+           "username"
+      from "users"
+     where "username" = $1
+  `;
+
+  const params = [username];
+  db.query(sql, params)
+    .then((result) => {
+      const [user] = result.rows;
+      if (!user) {
+        throw new ClientError(401, 'invalid login');
+      }
+      const { id, passwordHash, profilePictureUrl } = user;
+      return argon2
+        .verify(passwordHash, password)
+        .then((isMatching) => {
+          if (!isMatching) {
+            throw new ClientError(401, 'invalid login');
+          }
+          const token = jwt.sign({ userId: id }, process.env.TOKEN_SECRET);
+          res.status(200).json({ token, profilePictureUrl, username });
+        });
+    })
+    .catch((err) => {
+      console.log('argon2.verify error', err);
+      next(err);
+    });
+});
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 app.use(authorizationMiddleware);
 
-app.post('/marvel/auth-test', (req, res, next) => {
-  console.log('AUTH TESTED');
+app.post('/marvel/favorites', (req, res, next) => {
+  console.log('FAVES');
   res.status(200).json({
-    message: 'You are authorized!',
+    message: 'Looking at favorites!',
     user: req.user // this should contain the decoded user object from the token
   });
 });

@@ -7,13 +7,12 @@ const ProfileMenu = ({ profileMenu }) => {
   const navigate = useNavigate();
   const { username, setUsername, setProfilePictureUrl } = useContext(UserContext);
 
-  const handleTestAuth = async () => {
+  const handleFavorites = async () => {
     console.log('MAKING THE REQUEST');
     try {
-      await axios.post('http://localhost:3000/marvel/auth-test', null, { headers: { 'X-Access-Token': localStorage.getItem('authToken') } });
-      console.log('SUCCESSFUL AUTH TEST');
+      await axios.post('http://localhost:3000/marvel/favorites', null, { headers: { 'X-Access-Token': localStorage.getItem('authToken') } });
     } catch (error) {
-      console.error('FAILED AUTH TEST', error);
+      console.error('FAILED TO OPEN FAVORITES', error);
     }
   };
 
@@ -37,7 +36,7 @@ const ProfileMenu = ({ profileMenu }) => {
       {!username && <Link to='/sign-in'><p>Sign In</p></Link>}
       {username && (
       <div>
-        <div onClick={handleTestAuth}><p>My Favorites</p></div>
+        <div onClick={handleFavorites}><p>My Favorites</p></div>
         <div onClick={handleSignOut}><p>Sign Out</p></div>
       </div>)
           }
