@@ -113,8 +113,8 @@ app.post('/marvel/registration', (req, res, next) => {
 });
 
 app.post('/marvel/upload', uploadsMiddleware, (req, res, next) => {
-  console.log('UPLOAD HERE', req);
-  res.status(200).send('File uploaded successfully');
+  console.log('IMAGE UPLOADED');
+  res.status(200).send(req.file.filename);
 });
 
 app.post('/marvel/sign-in', (req, res, next) => {
