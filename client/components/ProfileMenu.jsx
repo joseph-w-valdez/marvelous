@@ -5,7 +5,7 @@ import axiosPost from '../utils/AxiosPost';
 
 const ProfileMenu = ({ profileMenu }) => {
   const navigate = useNavigate();
-  const { username, setUsername, setProfilePictureUrl } = useUser();
+  const { user, setUser } = useUser();
 
   const handleFavorites = async () => {
     console.log('MAKING THE REQUEST');
@@ -20,8 +20,7 @@ const ProfileMenu = ({ profileMenu }) => {
     try {
       await axiosPost('http://localhost:3000/marvel/sign-out', null);
       localStorage.removeItem('authToken'); // remove authentication token from local storage
-      setUsername(null);
-      setProfilePictureUrl(null);
+      setUser({ username: null, pictureUrl: null });
       navigate('/sign-in');
     } catch (error) {
       console.error('FAILED SIGN OUT', error);
@@ -33,8 +32,8 @@ const ProfileMenu = ({ profileMenu }) => {
     w-48 h-auto rounded-md absolute right-5 text-white font-Poppins top-9 bg-[#333333]
     pl-2 pt-1 pb-1 cursor-pointer ${profileMenu ? 'block' : 'hidden'}`
     } >
-      {!username && <Link to='/sign-in'><p>Sign In</p></Link>}
-      {username && (
+      {!user.username && <Link to='/sign-in'><p>Sign In</p></Link>}
+      {user.username && (
         <div>
           <div onClick={handleFavorites}><p>My Favorites</p></div>
           <div onClick={handleSignOut}><p>Sign Out</p></div>

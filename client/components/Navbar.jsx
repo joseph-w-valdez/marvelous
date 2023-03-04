@@ -6,7 +6,7 @@ import { useUser } from '../contexts/UserContext';
 export default function Navbar() {
   const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
   const profileMenuRef = useRef(null);
-  const { profilePictureUrl } = useUser();
+  const { user } = useUser();
 
   useEffect(() => {
     const handleClickAnywhere = (event) => {
@@ -27,11 +27,11 @@ export default function Navbar() {
   };
 
   const renderProfileIcon = () => {
-    if (profilePictureUrl) {
+    if (user.pictureUrl) {
       return (
         <div className='w-9 h-9 profile-icon border-2 rounded-full overflow-hidden cursor-pointer'>
           <img
-            src={profilePictureUrl}
+            src={user.pictureUrl}
             alt="Profile picture"
             className="w-full h-full object-cover"
             ref={profileMenuRef}

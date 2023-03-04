@@ -11,15 +11,13 @@ const useUser = () => {
 };
 
 const UserProvider = ({ children }) => {
-  const [username, setUsername] = useState(null);
-  const [profilePictureUrl, setProfilePictureUrl] = useState(null);
+  const [user, setUser] = useState({ username: null, pictureUrl: null });
 
   const reset = () => {
-    setUsername(null);
-    setProfilePictureUrl(null);
+    setUser({ username: null, pictureUrl: null });
   };
 
-  const value = { username, setUsername, profilePictureUrl, setProfilePictureUrl, reset };
+  const value = { user, setUser, reset };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
