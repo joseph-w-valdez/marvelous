@@ -7,7 +7,7 @@ import { setAuthToken } from '../utils/AuthToken';
 
 const SignIn = ({ onMount }) => {
   const [usernameInputValue, setUsernameInputValue] = useState('');
-  const [passwordInputvalue, setPasswordInputValue] = useState('');
+  const [passwordInputValue, setPasswordInputValue] = useState('');
   const [successMessage, setSuccessMessage] = useState(undefined);
   onMount();
 
@@ -19,7 +19,7 @@ const SignIn = ({ onMount }) => {
     const apiUrl = 'http://localhost:3000/marvel/sign-in';
     const data = {
       username: usernameInputValue,
-      password: passwordInputvalue
+      password: passwordInputValue
     };
     axiosPost(apiUrl, data)
       .then((res) => {
@@ -83,7 +83,7 @@ const SignIn = ({ onMount }) => {
               type="password"
               placeholder='Password'
               className='w-72 h-9 rounded px-3 mt-3'
-              value={passwordInputvalue}
+              value={passwordInputValue}
               onChange={(e) => setPasswordInputValue(e.target.value)}
               required
             />
