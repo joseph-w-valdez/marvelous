@@ -1,8 +1,16 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
-export const UserContext = createContext();
+const UserContext = createContext();
 
-export const UserProvider = ({ children }) => {
+const useUser = () => {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error('useUser must be used within a UserProvider');
+  }
+  return context;
+};
+
+const UserProvider = ({ children }) => {
   const [username, setUsername] = useState(null);
   const [profilePictureUrl, setProfilePictureUrl] = useState(null);
 
@@ -11,9 +19,9 @@ export const UserProvider = ({ children }) => {
     setProfilePictureUrl(null);
   };
 
-  return (
-    <UserContext.Provider value={{ username, setUsername, profilePictureUrl, setProfilePictureUrl, reset }}>
-      {children}
-    </UserContext.Provider>
-  );
+  const value = { username, setUsername, profilePictureUrl, setProfilePictureUrl, reset };
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
+
+export { useUser, UserProvider };

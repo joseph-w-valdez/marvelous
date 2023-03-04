@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import ProfileMenu from './ProfileMenu';
-import { UserContext } from '../contexts/UserContext';
+import { useUser } from '../contexts/UserContext';
 
 export default function Navbar() {
   const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
   const profileMenuRef = useRef(null);
-  const { profilePictureUrl } = useContext(UserContext);
+  const { profilePictureUrl } = useUser();
 
   useEffect(() => {
     const handleClickAnywhere = (event) => {

@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { UserContext } from '../contexts/UserContext';
 import axios from 'axios';
+import { useUser } from '../contexts/UserContext';
 
 const ProfileMenu = ({ profileMenu }) => {
   const navigate = useNavigate();
-  const { username, setUsername, setProfilePictureUrl } = useContext(UserContext);
+  const { username, setUsername, setProfilePictureUrl } = useUser();
 
   const handleFavorites = async () => {
     console.log('MAKING THE REQUEST');
@@ -35,11 +35,11 @@ const ProfileMenu = ({ profileMenu }) => {
     } >
       {!username && <Link to='/sign-in'><p>Sign In</p></Link>}
       {username && (
-      <div>
-        <div onClick={handleFavorites}><p>My Favorites</p></div>
-        <div onClick={handleSignOut}><p>Sign Out</p></div>
-      </div>)
-          }
+        <div>
+          <div onClick={handleFavorites}><p>My Favorites</p></div>
+          <div onClick={handleSignOut}><p>Sign Out</p></div>
+        </div>)
+      }
     </div>
   );
 };

@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '../components/Button';
 import { Link, useNavigate } from 'react-router-dom';
+import { useUser } from '../contexts/UserContext';
 
-import { UserContext } from '../contexts/UserContext';
 const axios = require('axios');
 
 const SignIn = ({ onMount }) => {
@@ -12,7 +12,7 @@ const SignIn = ({ onMount }) => {
   onMount();
 
   const navigate = useNavigate();
-  const { setUsername, setProfilePictureUrl } = useContext(UserContext);
+  const { setUsername, setProfilePictureUrl } = useUser();
 
   const handleSignIn = (e) => {
     e.preventDefault();
@@ -52,7 +52,6 @@ const SignIn = ({ onMount }) => {
       })
       .catch((err) => console.error(err));
   };
-
   return (
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
       <h1 className='text-4xl text-center mb-2'>SIGN IN</h1>
@@ -93,7 +92,7 @@ const SignIn = ({ onMount }) => {
           </form>
           <div className='basis-full' />
           <Link to='/register'><p className='text-blue-500 underline text-sm'>Don&apos;t have an account? click here!</p></Link>
-          <Button text='DEMO BUTTON' type="button" onClick={handleDemo} color='red-500'/>
+          <Button text='DEMO BUTTON' type="button" onClick={handleDemo} />
         </>
       )}
     </div>
