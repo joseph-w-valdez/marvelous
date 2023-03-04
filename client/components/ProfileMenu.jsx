@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { useUser } from '../contexts/UserContext';
+import axiosPost from '../utils/AxiosPost';
 
 const ProfileMenu = ({ profileMenu }) => {
   const navigate = useNavigate();
@@ -10,7 +10,7 @@ const ProfileMenu = ({ profileMenu }) => {
   const handleFavorites = async () => {
     console.log('MAKING THE REQUEST');
     try {
-      await axios.post('http://localhost:3000/marvel/favorites', null, { headers: { 'X-Access-Token': localStorage.getItem('authToken') } });
+      await axiosPost('http://localhost:3000/marvel/favorites', null);
     } catch (error) {
       console.error('FAILED TO OPEN FAVORITES', error);
     }
@@ -18,7 +18,7 @@ const ProfileMenu = ({ profileMenu }) => {
 
   const handleSignOut = async () => {
     try {
-      await axios.post('http://localhost:3000/marvel/sign-out', null, { headers: { 'X-Access-Token': localStorage.getItem('authToken') } });
+      await axiosPost('http://localhost:3000/marvel/sign-out', null);
       localStorage.removeItem('authToken'); // remove authentication token from local storage
       setUsername(null);
       setProfilePictureUrl(null);

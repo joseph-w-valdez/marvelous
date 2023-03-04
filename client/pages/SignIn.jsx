@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Button from '../components/Button';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../contexts/UserContext';
-
-const axios = require('axios');
+import axiosPost from '../utils/AxiosPost';
 
 const SignIn = ({ onMount }) => {
   const [usernameInputValue, setUsernameInputValue] = useState('');
@@ -21,7 +20,7 @@ const SignIn = ({ onMount }) => {
       username: usernameInputValue,
       password: passwordInputvalue
     };
-    axios.post(apiUrl, data)
+    axiosPost(apiUrl, data)
       .then((res) => {
         setUsername(data.username);
         setProfilePictureUrl(res.data.profilePictureUrl);
@@ -43,7 +42,7 @@ const SignIn = ({ onMount }) => {
 
   const handleDemo = () => {
     const apiUrl = 'http://localhost:3000/marvel/demo';
-    axios.post(apiUrl)
+    axiosPost(apiUrl)
       .then((res) => {
         setUsername(res.data.username);
         setProfilePictureUrl(res.data.profilePictureUrl);
