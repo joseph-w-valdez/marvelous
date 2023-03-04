@@ -28,7 +28,7 @@ const API_PRIVATE_KEY = 'c2746ff73c66112e104538fe16622cbb21205d8f';
 app.use(staticMiddleware);
 app.use(express.json());
 
-app.get('/marvel/:characterName', (req, res, next) => {
+app.get('/marvel/character/:characterName', (req, res, next) => {
 
   const timestamp = Date.now().toString();
   const hash = crypto.createHash('md5').update(timestamp + API_PRIVATE_KEY + API_PUBLIC_KEY).digest('hex');
@@ -113,8 +113,8 @@ app.post('/marvel/registration', (req, res, next) => {
 });
 
 app.post('/marvel/upload', uploadsMiddleware, (req, res, next) => {
-  console.log('UPLOAD HERE', req);
-  res.status(200).send('File uploaded successfully');
+  console.log('IMAGE UPLOADED');
+  res.status(200).send(req.file.filename);
 });
 
 app.post('/marvel/sign-in', (req, res, next) => {
@@ -124,7 +124,8 @@ app.post('/marvel/sign-in', (req, res, next) => {
   }
   const sql = `
     select "id",
-           "passwordHash"
+           "passwordHash",
+           "profilePictureUrl"
       from "users"
      where "username" = $1
   `;
@@ -136,17 +137,15 @@ app.post('/marvel/sign-in', (req, res, next) => {
       if (!user) {
         throw new ClientError(401, 'invalid login');
       }
-      const { id, passwordHash } = user;
-      console.log('id', id, 'passwordHash', passwordHash, 'password', password);
+      const { id, passwordHash, profilePictureUrl } = user;
       return argon2
         .verify(passwordHash, password)
         .then((isMatching) => {
-          console.log('isMatching', isMatching);
           if (!isMatching) {
             throw new ClientError(401, 'invalid login');
           }
           const token = jwt.sign({ userId: id }, process.env.TOKEN_SECRET);
-          res.status(200).json({ token });
+          res.status(200).json({ token, profilePictureUrl });
         });
     })
     .catch((err) => {
@@ -155,10 +154,64 @@ app.post('/marvel/sign-in', (req, res, next) => {
     });
 });
 
-app.use(authorizationMiddleware);
+app.post('/marvel/demo', (req, res, next) => {
+
+  const username = 'didyouknow';
+  const password = 'Vaporeon!1';
+
+  const sql = `
+    select "id",
+           "passwordHash",
+           "profilePictureUrl",
+           "username"
+      from "users"
+     where "username" = $1
+  `;
+
+  const params = [username];
+  db.query(sql, params)
+    .then((result) => {
+      const [user] = result.rows;
+      if (!user) {
+        throw new ClientError(401, 'invalid login');
+      }
+      const { id, passwordHash, profilePictureUrl } = user;
+      return argon2
+        .verify(passwordHash, password)
+        .then((isMatching) => {
+          if (!isMatching) {
+            throw new ClientError(401, 'invalid login');
+          }
+          const token = jwt.sign({ userId: id }, process.env.TOKEN_SECRET);
+          res.status(200).json({ token, profilePictureUrl, username });
+        });
+    })
+    .catch((err) => {
+      console.log('argon2.verify error', err);
+      next(err);
+    });
+});
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
+});
+
+app.use(authorizationMiddleware);
+
+app.post('/marvel/favorites', (req, res, next) => {
+  console.log('FAVES');
+  res.status(200).json({
+    message: 'Looking at favorites!',
+    user: req.user // this should contain the decoded user object from the token
+  });
+});
+
+app.post('/marvel/sign-out', (req, res, next) => {
+  console.log('SIGNED OUT');
+  res.clearCookie('token');
+  res.status(200).json({
+    message: 'You have been signed out'
+  });
 });
 
 app.use(errorMiddleware);

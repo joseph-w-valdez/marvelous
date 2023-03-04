@@ -2,13 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
-// Import custom components for rendering form fields
 import Button from '../components/Button';
 import InputField from '../components/InputField';
 import FileInput from '../components/FileInput';
-// Import custom function for handling user registration
 import handleRegistration from '../components/handleRegistration';
-// Import custom validation functions; the verification validations were not exported due to difficulties with using watch() for the corresponding form content
 import { usernameValidation, emailValidation, passwordValidation } from '../components/validation';
 
 const Register = ({ onMount }) => {
