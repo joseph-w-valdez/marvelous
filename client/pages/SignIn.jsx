@@ -92,6 +92,7 @@ const SignIn = ({ onMount }) => {
             </form>
             <div className='basis-full' />
             <Link to='/register'><p className='text-blue-500 underline text-sm'>Don&apos;t have an account? click here!</p></Link>
+            <div className='basis-full' />
             <Button text='DEMO BUTTON' type="button" onClick={handleDemo} />
           </>
           )}

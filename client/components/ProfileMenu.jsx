@@ -8,12 +8,7 @@ const ProfileMenu = ({ profileMenu }) => {
   const { user, setUser } = useUser();
 
   const handleFavorites = async () => {
-    console.log('MAKING THE REQUEST');
-    try {
-      await axiosPost('http://localhost:3000/marvel/favorites', null);
-    } catch (error) {
-      console.error('FAILED TO OPEN FAVORITES', error);
-    }
+    navigate('/favorites');
   };
 
   const handleSignOut = async () => {
