@@ -1,0 +1,26 @@
+[
+ {
+  "createdAt": "2023-03-03T22:35:14.754375Z",
+  "email": "hash_of_user1@example.com                                   ",
+  "id": 1,
+  "passwordHash": "$2y$10$Y53YJF.TgZm9kckHnpq3z.18uzJfhqb7OM/YtByY/UXTQzRtjL5x2",
+  "profilePictureUrl": "https://example.com/user1.jpg",
+  "username": "user1"
+ },
+ {
+  "createdAt": "2023-03-03T22:35:14.754375Z",
+  "email": "hash_of_user2@example.com                                   ",
+  "id": 2,
+  "passwordHash": "$2y$10$c4Q/W50tFhDlOwscyj81AOCc5lz5O5hvlEs5OeiSEld9GnJ1f7VWK",
+  "profilePictureUrl": null,
+  "username": "user2"
+ },
+ {
+  "createdAt": "2023-03-03T22:35:57.079802Z",
+  "email": "asd@asd.com                                                 ",
+  "id": 3,
+  "passwordHash": "$argon2id$v=19$m=4096,t=3,p=1$2//7a2ZcOrOA1UsBaVQo6w$EPjliLEiO5ih8PgYjnlSvRIT/5+vqYYpoKDgVKTQKjI",
+  "profilePictureUrl": "http://localhost:3000/images/image-1677882956940.png",
+  "username": "didyouknow"
+ }
+]

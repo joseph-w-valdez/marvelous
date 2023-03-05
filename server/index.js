@@ -190,18 +190,35 @@ app.post('/marvel/demo', (req, res, next) => {
     });
 });
 
+app.post('/marvel/favorites', (req, res, next) => {
+  const { selectedCharacter } = req.body;
+  const { user } = req;
+  if (!selectedCharacter) {
+    throw new ClientError(400, 'selectedCharacter is a required field');
+  }
+  db.query(`
+    INSERT INTO "characters" ("name", "description", "imageUrl", "comicAppearances")
+    VALUES ($1, $2, $3, $4)
+    ON CONFLICT ("name") DO NOTHING
+    RETURNING "id"
+  `, [selectedCharacter.name, selectedCharacter.description, selectedCharacter.thumbnailUrl, selectedCharacter.comicAppearances])
+    .then((result) => {
+      if (result.rows.length === 0) {
+        // The character already exists, so no new row was inserted
+        res.status(200).json({ message: 'Character already exists' });
+      } else {
+        const [newCharacter] = result.rows;
+        res.status(201).json(newCharacter);
+      }
+    })
+    .catch((err) => next(err));
+});
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 app.use(authorizationMiddleware);
-
-app.post('/marvel/favorites', (req, res, next) => {
-  res.status(200).json({
-    message: 'Looking at favorites!'
-  });
-  console.log('REK DAT BODY', req.body);
-});
 
 app.post('/marvel/sign-out', (req, res, next) => {
   res.clearCookie('token');

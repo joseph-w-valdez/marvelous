@@ -9,7 +9,7 @@ create schema "public";
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   "username" TEXT UNIQUE NOT NULL,
-  email CHAR(60) unique NOT NULL,
+  email TEXT unique NOT NULL,
   "passwordHash" TEXT NOT NULL,
   "profilePictureUrl" TEXT,
   "createdAt" timestamptz(6) not null default now()
@@ -17,11 +17,12 @@ CREATE TABLE users (
 
 CREATE TABLE characters (
   id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL,
+  name TEXT NOT NULL UNIQUE,
   description TEXT NOT NULL,
   "imageUrl" TEXT NOT NULL,
   "comicAppearances" INT NOT NULL
 );
+
 
 CREATE TABLE favorites (
   "userId" INT NOT NULL,
