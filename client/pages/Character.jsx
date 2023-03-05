@@ -20,7 +20,11 @@ const Character = ({ selectedCharacter, onMount }) => {
   const handleFavorites = async () => {
     const apiUrl = 'http://localhost:3000/marvel/favorites';
     try {
-      const response = await axiosPost(apiUrl, { selectedCharacter, user });
+      const response = await axiosPost(apiUrl, {
+        selectedCharacter,
+        user,
+        action: isFavorited ? 'unfavorite' : 'favorite'
+      });
       console.log(response);
       setIsFavorited(!isFavorited);
     } catch (error) {

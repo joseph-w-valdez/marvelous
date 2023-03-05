@@ -191,7 +191,7 @@ app.post('/marvel/demo', (req, res, next) => {
 });
 
 app.post('/marvel/favorites', (req, res, next) => {
-  const { selectedCharacter, user } = req.body;
+  const { selectedCharacter, user, action } = req.body;
   console.log('USER', user);
   if (!selectedCharacter) {
     throw new ClientError(400, 'selectedCharacter is a required field');
@@ -210,14 +210,27 @@ app.post('/marvel/favorites', (req, res, next) => {
           .then((result) => {
             const [currentUser] = result.rows;
             const favoriteData = [currentUser.id, characterId];
-            db.query(`
-              INSERT INTO favorites ("userId", "characterId")
-              VALUES ($1, $2)
-            `, favoriteData)
-              .then(() => {
-                res.status(201).json(existingCharacter);
-              })
-              .catch((err) => next(err));
+            if (action === 'unfavorite') {
+              db.query(`
+                DELETE FROM favorites
+                WHERE "userId" = $1 AND "characterId" = $2
+              `, favoriteData)
+                .then(() => {
+                  res.status(200).json({ message: 'Successfully removed from favorites.' });
+                })
+                .catch((err) => next(err));
+            } else {
+              db.query(`
+                INSERT INTO favorites ("userId", "characterId")
+                VALUES ($1, $2)
+                ON CONFLICT ("userId", "characterId")
+                DO UPDATE SET "userId" = EXCLUDED."userId", "characterId" = EXCLUDED."characterId";
+              `, favoriteData)
+                .then(() => {
+                  res.status(201).json(existingCharacter);
+                })
+                .catch((err) => next(err));
+            }
           })
           .catch((err) => next(err));
       } else {
@@ -235,14 +248,21 @@ app.post('/marvel/favorites', (req, res, next) => {
               .then((result) => {
                 const [currentUser] = result.rows;
                 const favoriteData = [currentUser.id, newCharacter.id];
-                db.query(`
-                  INSERT INTO favorites ("userId", "characterId")
-                  VALUES ($1, $2)
-                `, favoriteData)
-                  .then(() => {
-                    res.status(201).json(newCharacter);
-                  })
-                  .catch((err) => next(err));
+                if (action === 'unfavorite') {
+                  // We can't delete a favorite that doesn't exist, so just return a success message
+                  res.status(200).json({ message: 'Successfully removed from favorites.' });
+                } else {
+                  db.query(`
+                    INSERT INTO favorites ("userId", "characterId")
+                    VALUES ($1, $2)
+                    ON CONFLICT ("userId", "characterId")
+                    DO UPDATE SET "userId" = EXCLUDED."userId", "characterId" = EXCLUDED."characterId";
+                  `, favoriteData)
+                    .then(() => {
+                      res.status(201).json(newCharacter);
+                    })
+                    .catch((err) => next(err));
+                }
               })
               .catch((err) => next(err));
           })
