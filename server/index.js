@@ -84,7 +84,6 @@ app.post('/marvel/registration', (req, res, next) => {
       ]);
     })
     .then(([usernameResult, emailResult, passwordHash]) => {
-      console.log('passwordHash', passwordHash, 'end');
       if (usernameResult.rows.length > 0) {
         throw new ClientError(409, 'username already exists');
       }
@@ -113,7 +112,6 @@ app.post('/marvel/registration', (req, res, next) => {
 });
 
 app.post('/marvel/upload', uploadsMiddleware, (req, res, next) => {
-  console.log('IMAGE UPLOADED');
   res.status(200).send(req.file.filename);
 });
 
@@ -149,7 +147,7 @@ app.post('/marvel/sign-in', (req, res, next) => {
         });
     })
     .catch((err) => {
-      console.log('argon2.verify error', err);
+      console.error('argon2.verify error', err);
       next(err);
     });
 });
@@ -187,7 +185,7 @@ app.post('/marvel/demo', (req, res, next) => {
         });
     })
     .catch((err) => {
-      console.log('argon2.verify error', err);
+      console.error('argon2.verify error', err);
       next(err);
     });
 });
@@ -199,15 +197,13 @@ app.get('*', (req, res) => {
 app.use(authorizationMiddleware);
 
 app.post('/marvel/favorites', (req, res, next) => {
-  console.log('FAVES');
   res.status(200).json({
-    message: 'Looking at favorites!',
-    user: req.user // this should contain the decoded user object from the token
+    message: 'Looking at favorites!'
   });
+  console.log('REK DAT BODY', req.body);
 });
 
 app.post('/marvel/sign-out', (req, res, next) => {
-  console.log('SIGNED OUT');
   res.clearCookie('token');
   res.status(200).json({
     message: 'You have been signed out'

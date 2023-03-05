@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useUser } from '../contexts/UserContext';
+import axiosPost from '../utils/AxiosPost';
 
 const Character = ({ selectedCharacter, onMount }) => {
-
+  const { user } = useUser();
   onMount();
 
   if (!selectedCharacter) {
@@ -13,6 +15,20 @@ const Character = ({ selectedCharacter, onMount }) => {
     };
   }
   const { name, description, thumbnailUrl, comicAppearances } = selectedCharacter;
+  const [isFavorited, setIsFavorited] = useState(null);
+
+  const handleFavorites = async () => {
+    const apiUrl = 'http://localhost:3000/marvel/favorites';
+    console.log('DATA HERE', selectedCharacter);
+    try {
+      const response = await axiosPost(apiUrl, selectedCharacter);
+      console.log(response);
+      setIsFavorited(!isFavorited);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
       <h1 className='text-4xl text-center mb-2'>{name}</h1>
@@ -28,7 +44,19 @@ const Character = ({ selectedCharacter, onMount }) => {
       <div className='max-w-5xl mx-5 my-6'>
         <p className='w-11/12'>Biography: {description}</p>
         <p className='mt-6 w-11/12'>Comic Appearances: {comicAppearances}</p>
-        <div className='mt-6 w-11/12 cursor-pointer'><i className="fa-regular fa-star inline mr-3" /><p className="inline">Add to Favorites</p></div>
+        <div className='mt-6 w-11/12 cursor-pointer' onClick={handleFavorites}>
+          {user && user.username
+            ? (
+              <>
+                <i className={`fa-${isFavorited ? 'solid' : 'regular'} fa-star inline mr-3`} />
+                <p className="inline">Add to Favorites</p>
+              </>
+              )
+            : (
+              <p className="text-blue-500">Sign in to add to favorites!</p>
+              )}
+        </div>
+
       </div>
     </div>
   );

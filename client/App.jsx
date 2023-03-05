@@ -21,14 +21,16 @@ function App() {
         <Navbar />
         <div className="mt-14">
           <SubNavbar text={subNavbarText} />
-          <div className='top-12 relative'>
-            <Routes>
-              <Route path="/" element={<Home onSearch={setCharacterData} onMount={() => setSubNavBarText('SEARCH')} />} />
-              <Route path="/character" element={<Character selectedCharacter={characterData} onMount={() => setSubNavBarText('CHARACTER')} />} />
-              <Route path="/sign-in" element={<SignIn onMount={() => setSubNavBarText('ACCOUNT')} />} />
-              <Route path="/register" element={<Register onMount={() => setSubNavBarText('ACCOUNT')} />} />
-              <Route path="/favorites" element={<Favorites onMount={() => setSubNavBarText('FAVORITES')} />} />
-            </Routes>
+          <div className="body-content" style={{ paddingTop: '100px' }}>
+            <div className="routes-container" style={{ marginTop: '-60px' }}>
+              <Routes>
+                <Route path="/" element={<Home onSearch={setCharacterData} onMount={() => setSubNavBarText('SEARCH')} />} />
+                <Route path="/character" element={<Character selectedCharacter={characterData} onMount={() => setSubNavBarText('CHARACTER')} />} />
+                <Route path="/sign-in" element={<SignIn onMount={() => setSubNavBarText('ACCOUNT')} />} />
+                <Route path="/register" element={<Register onMount={() => setSubNavBarText('ACCOUNT')} />} />
+                <Route path="/favorites" element={<Favorites onMount={() => setSubNavBarText('FAVORITES')} />} />
+              </Routes>
+            </div>
           </div>
         </div>
       </div>

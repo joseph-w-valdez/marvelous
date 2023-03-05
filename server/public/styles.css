@@ -559,6 +559,10 @@ video {
   position: relative;
 }
 
+.sticky {
+  position: sticky;
+}
+
 .right-5 {
   right: 1.25rem;
 }
