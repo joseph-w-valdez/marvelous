@@ -16,7 +16,7 @@ const Character = ({ selectedCharacter, onMount }) => {
   }
   const { name, description, thumbnailUrl, comicAppearances } = selectedCharacter;
   const [isFavorited, setIsFavorited] = useState(null);
-
+  console.log('SELECTED', selectedCharacter);
   const handleFavorites = async () => {
     const apiUrl = 'http://localhost:3000/marvel/favorites';
     try {
@@ -25,7 +25,7 @@ const Character = ({ selectedCharacter, onMount }) => {
         user,
         action: isFavorited ? 'unfavorite' : 'favorite'
       });
-      console.log(response);
+      console.log('HERE', response.data);
       setIsFavorited(!isFavorited);
     } catch (error) {
       console.error(error);

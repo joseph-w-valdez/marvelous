@@ -17,7 +17,7 @@ const CharacterSearch = ({ onSearch }) => {
       .then((response) => {
         onSearch(response.data);
         setErrorMessage(undefined);
-        navigate('/character'); // navigate to /character route
+        navigate('/character');
       })
       .catch((error) => {
         if (error.response && error.response.status === 404) {

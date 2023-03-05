@@ -212,7 +212,6 @@ app.post('/marvel/demo', async (req, res, next) => {
 
     const { id, passwordHash, profilePictureUrl } = user;
     const favoritesList = await getFavoriteCharacterIds(user.id);
-    console.log('faves', favoritesList);
 
     const isMatching = await argon2.verify(passwordHash, password);
     if (!isMatching) {
@@ -281,6 +280,7 @@ app.post('/marvel/favorites', async (req, res, next) => {
     if (!characterId) {
       const newCharacter = await addNewCharacter(selectedCharacter);
       characterId = newCharacter.id;
+      console.log('HOW', characterId);
     }
 
     const userId = await getUserId(user.username);
@@ -289,11 +289,11 @@ app.post('/marvel/favorites', async (req, res, next) => {
         DELETE FROM favorites
         WHERE "userId" = $1 AND "characterId" = $2
       `, [userId, characterId]);
-      res.status(200).json({ message: 'Successfully removed from favorites.' });
+      res.status(200).json({ message: 'Successfully removed from favorites.', id: characterId });
     } else {
       await addFavorite(userId, characterId);
       if (characterId) {
-        res.status(201).json({ id: characterId });
+        res.status(201).json({ message: 'Successfully added to favorites', id: characterId });
       } else {
         throw new Error('Unable to retrieve character ID');
       }
