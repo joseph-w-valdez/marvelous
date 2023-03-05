@@ -47,11 +47,15 @@ const Character = ({ selectedCharacter, onMount }) => {
       });
       console.log('HERE', response.data);
       console.log('isFavorited?', isFavorited);
-      console.log(user.favorites);
+
       if (!isFavorited) {
-        console.log('favoriting');
+        const updatedFavorites = [...user.favorites, response.data.id];
+        setUser((prevState) => ({ ...prevState, favorites: updatedFavorites }));
+        console.log('favoriting', user.favorites, 'user', user);
       } else {
-        console.log('unfavoriting');
+        const updatedFavorites = user.favorites.filter((favoriteId) => favoriteId !== response.data.id);
+        setUser((prevState) => ({ ...prevState, favorites: updatedFavorites }));
+        console.log('unfavoriting', user.favorites, 'user', user);
       }
       setIsFavorited(!isFavorited);
     } catch (error) {
