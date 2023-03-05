@@ -191,24 +191,62 @@ app.post('/marvel/demo', (req, res, next) => {
 });
 
 app.post('/marvel/favorites', (req, res, next) => {
-  const { selectedCharacter } = req.body;
-  const { user } = req;
+  const { selectedCharacter, user } = req.body;
+  console.log('USER', user);
   if (!selectedCharacter) {
     throw new ClientError(400, 'selectedCharacter is a required field');
   }
   db.query(`
-    INSERT INTO "characters" ("name", "description", "imageUrl", "comicAppearances")
-    VALUES ($1, $2, $3, $4)
-    ON CONFLICT ("name") DO NOTHING
-    RETURNING "id"
-  `, [selectedCharacter.name, selectedCharacter.description, selectedCharacter.thumbnailUrl, selectedCharacter.comicAppearances])
+    SELECT id FROM characters WHERE name = $1
+  `, [selectedCharacter.name])
     .then((result) => {
-      if (result.rows.length === 0) {
-        // The character already exists, so no new row was inserted
-        res.status(200).json({ message: 'Character already exists' });
+      if (result.rows.length > 0) {
+        // The character already exists, so use its id
+        const [existingCharacter] = result.rows;
+        const characterId = existingCharacter.id;
+        db.query(`
+          SELECT id FROM users WHERE username = $1
+        `, [user.username])
+          .then((result) => {
+            const [currentUser] = result.rows;
+            const favoriteData = [currentUser.id, characterId];
+            db.query(`
+              INSERT INTO favorites ("userId", "characterId")
+              VALUES ($1, $2)
+            `, favoriteData)
+              .then(() => {
+                res.status(201).json(existingCharacter);
+              })
+              .catch((err) => next(err));
+          })
+          .catch((err) => next(err));
       } else {
-        const [newCharacter] = result.rows;
-        res.status(201).json(newCharacter);
+        // The character doesn't exist, so insert it and use its new id
+        db.query(`
+          INSERT INTO "characters" ("name", "description", "imageUrl", "comicAppearances")
+          VALUES ($1, $2, $3, $4)
+          RETURNING "id"
+        `, [selectedCharacter.name, selectedCharacter.description, selectedCharacter.thumbnailUrl, selectedCharacter.comicAppearances])
+          .then((result) => {
+            const [newCharacter] = result.rows;
+            db.query(`
+              SELECT id FROM users WHERE username = $1
+            `, [user.username])
+              .then((result) => {
+                const [currentUser] = result.rows;
+                const favoriteData = [currentUser.id, newCharacter.id];
+                db.query(`
+                  INSERT INTO favorites ("userId", "characterId")
+                  VALUES ($1, $2)
+                `, favoriteData)
+                  .then(() => {
+                    res.status(201).json(newCharacter);
+                  })
+                  .catch((err) => next(err));
+              })
+              .catch((err) => next(err));
+          })
+          .catch((err) => next(err));
       }
     })
     .catch((err) => next(err));
