@@ -28,87 +28,105 @@ const API_PRIVATE_KEY = 'c2746ff73c66112e104538fe16622cbb21205d8f';
 app.use(staticMiddleware);
 app.use(express.json());
 
-app.get('/marvel/character/:characterName', (req, res, next) => {
-
-  const timestamp = Date.now().toString();
-  const hash = crypto.createHash('md5').update(timestamp + API_PRIVATE_KEY + API_PUBLIC_KEY).digest('hex');
-  const characterName = req.params.characterName;
-  const url = `https://gateway.marvel.com/v1/public/characters?apikey=${API_PUBLIC_KEY}&ts=${timestamp}&hash=${hash}&name=${encodeURIComponent(characterName)}`;
-
-  axios.get(url)
-    .then(({ data: { data: { results } } }) => {
-      if (results.length === 0) {
-        throw new ClientError(404, `Could not find character with name '${characterName}'`);
-      }
-      const { name, description = 'None Available', thumbnail, comics } = results[0] || {};
-      const characterThumbnailUrl = thumbnail ? `${thumbnail.path}.${thumbnail.extension}` : 'None Available';
-      const characterComicAppearances = comics ? comics.available : 'None Available';
-
-      const characterData = {
-        name,
-        description: description || 'None Available',
-        thumbnailUrl: characterThumbnailUrl,
-        comicAppearances: characterComicAppearances
-      };
-
-      res.status(200).json(characterData);
-    })
-    .catch((error) => {
-      console.error(error);
-      next(error);
-    });
+app.get('/marvel/character/:characterName', async (req, res, next) => {
+  try {
+    // Get the timestamp and hash for the API request
+    const timestamp = Date.now().toString();
+    const hash = crypto.createHash('md5').update(timestamp + API_PRIVATE_KEY + API_PUBLIC_KEY).digest('hex');
+    // Get the character name from the request parameters
+    const characterName = req.params.characterName;
+    // Construct the URL for the API request
+    const url = `https://gateway.marvel.com/v1/public/characters?apikey=${API_PUBLIC_KEY}&ts=${timestamp}&hash=${hash}&name=${encodeURIComponent(characterName)}`;
+    // Send the API request and get the results
+    const { data: { data: { results } } } = await axios.get(url);
+    // If no results are found, throw a 404 error
+    if (results.length === 0) {
+      throw new ClientError(404, `Could not find character with name '${characterName}'`);
+    }
+    // Extract the relevant properties from the first result
+    const { name, description = 'None Available', thumbnail, comics } = results[0];
+    // Construct the thumbnail URL and comic appearances string
+    const characterThumbnailUrl = thumbnail ? `${thumbnail.path}.${thumbnail.extension}` : 'None Available';
+    const characterComicAppearances = comics ? comics.available : 'None Available';
+    // Construct the character data object
+    const characterData = {
+      name,
+      description: description || 'None Available',
+      thumbnailUrl: characterThumbnailUrl,
+      comicAppearances: characterComicAppearances
+    };
+    // Send the character data as a JSON response
+    res.status(200).json(characterData);
+  } catch (error) {
+    // Log the error and pass it to the error handling middleware
+    console.error(error);
+    next(error);
+  }
 });
 
-app.post('/marvel/registration', (req, res, next) => {
-  const { username, password, email, profilePictureUrl } = req.body;
-  if (!username || !password || !email) {
-    throw new ClientError(400, 'username, password, and email are all required fields');
-  }
-  argon2
-    .hash(password)
-    .then((passwordHash) => {
-      const usernameSql = `
-        select "id", "username", "email", "createdAt" from "users" where "username" = $1 limit 1
-      `;
-      const usernameParams = [username];
+function getUserByUsername(username) {
+  const sql = `
+    select "id", "username", "email", "createdAt" from "users" where "username" = $1 limit 1
+  `;
+  const params = [username];
+  return db.query(sql, params);
+}
 
-      const emailSql = `
-        select "id", "username", "email", "createdAt" from "users" where "email" = $1 limit 1
-      `;
-      const emailParams = [email];
+function getUserByEmail(email) {
+  const sql = `
+    select "id", "username", "email", "createdAt" from "users" where "email" = $1 limit 1
+  `;
+  const params = [email];
+  return db.query(sql, params);
+}
 
-      return Promise.all([
-        db.query(usernameSql, usernameParams),
-        db.query(emailSql, emailParams),
-        Promise.resolve(passwordHash)
-      ]);
-    })
-    .then(([usernameResult, emailResult, passwordHash]) => {
-      if (usernameResult.rows.length > 0) {
-        throw new ClientError(409, 'username already exists');
-      }
-      if (emailResult.rows.length > 0) {
-        throw new ClientError(409, 'email already exists');
-      }
-      const sql = `
+function createUser(username, passwordHash, email, profilePictureUrl) {
+  const sql = `
     insert into "users" ("username", "passwordHash", "email", "profilePictureUrl")
     values ($1, $2, $3, $4)
     on conflict do nothing
     returning "id", "username", "email", "createdAt", "profilePictureUrl"
   `;
-      const params = [username, passwordHash, email, profilePictureUrl];
-      return db.query(sql, params);
-    })
+  const params = [username, passwordHash, email, profilePictureUrl];
+  return db.query(sql, params);
+}
 
-    .then((result) => {
-      if (result.rowCount === 0) {
-        throw new ClientError(409, 'username or email already exists');
-      } else {
-        const [user] = result.rows;
-        res.status(201).json(user);
-      }
-    })
-    .catch((err) => next(err));
+app.post('/marvel/registration', async (req, res, next) => {
+  const { username, password, email, profilePictureUrl } = req.body;
+
+  if (!username || !password || !email) {
+    throw new ClientError(400, 'username, password, and email are all required fields');
+  }
+
+  try {
+    // Hash the password and query the database for existing usernames and emails in parallel
+    const passwordHash = await argon2.hash(password);
+    const [usernameResult, emailResult] = await Promise.all([
+      getUserByUsername(username),
+      getUserByEmail(email)
+    ]);
+
+    // Check if username or email already exists in the database
+    if (usernameResult.rows.length > 0) {
+      throw new ClientError(409, 'username already exists');
+    }
+    if (emailResult.rows.length > 0) {
+      throw new ClientError(409, 'email already exists');
+    }
+    // Insert the new user into the database
+    const result = await createUser(username, passwordHash, email, profilePictureUrl);
+
+    if (result.rowCount === 0) {
+      // If no rows were affected, the insert failed due to a conflict with existing data
+      throw new ClientError(409, 'username or email already exists');
+    } else {
+      const [user] = result.rows;
+      // Return the newly created user as a response
+      res.status(201).json(user);
+    }
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.post('/marvel/upload', uploadsMiddleware, (req, res, next) => {
@@ -117,9 +135,11 @@ app.post('/marvel/upload', uploadsMiddleware, (req, res, next) => {
 
 app.post('/marvel/sign-in', (req, res, next) => {
   const { username, password } = req.body;
+
   if (!username || !password) {
     throw new ClientError(401, 'invalid login');
   }
+
   const sql = `
     select "id",
            "passwordHash",
@@ -127,21 +147,27 @@ app.post('/marvel/sign-in', (req, res, next) => {
       from "users"
      where "username" = $1
   `;
-
   const params = [username];
+
   db.query(sql, params)
     .then((result) => {
       const [user] = result.rows;
+
       if (!user) {
         throw new ClientError(401, 'invalid login');
       }
+
+      // If user is found, verify the provided password
       const { id, passwordHash, profilePictureUrl } = user;
-      return argon2
-        .verify(passwordHash, password)
+      return argon2.verify(passwordHash, password)
         .then((isMatching) => {
+
+          // If password is invalid, throw an error
           if (!isMatching) {
             throw new ClientError(401, 'invalid login');
           }
+
+          // If password is valid, create a JWT token and send it as a response
           const token = jwt.sign({ userId: id }, process.env.TOKEN_SECRET);
           res.status(200).json({ token, profilePictureUrl });
         });
@@ -153,26 +179,27 @@ app.post('/marvel/sign-in', (req, res, next) => {
 });
 
 app.post('/marvel/demo', (req, res, next) => {
-
+  // Hardcoded username and password for demo purposes
   const username = 'didyouknow';
   const password = 'Vaporeon!1';
 
   const sql = `
-    select "id",
+    SELECT "id",
            "passwordHash",
            "profilePictureUrl",
            "username"
-      from "users"
-     where "username" = $1
+      FROM "users"
+     WHERE "username" = $1
   `;
-
   const params = [username];
+
   db.query(sql, params)
     .then((result) => {
       const [user] = result.rows;
       if (!user) {
         throw new ClientError(401, 'invalid login');
       }
+
       const { id, passwordHash, profilePictureUrl } = user;
       return argon2
         .verify(passwordHash, password)
