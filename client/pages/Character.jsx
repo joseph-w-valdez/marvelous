@@ -46,6 +46,13 @@ const Character = ({ selectedCharacter, onMount }) => {
         action: isFavorited ? 'unfavorite' : 'favorite'
       });
       console.log('HERE', response.data);
+      console.log('isFavorited?', isFavorited);
+      console.log(user.favorites);
+      if (!isFavorited) {
+        console.log('favoriting');
+      } else {
+        console.log('unfavoriting');
+      }
       setIsFavorited(!isFavorited);
     } catch (error) {
       console.error(error);
