@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUser } from '../contexts/UserContext';
 import axiosPost from '../utils/AxiosPost';
 
@@ -16,9 +16,28 @@ const Character = ({ selectedCharacter, onMount }) => {
   }
   const { name, description, thumbnailUrl, comicAppearances } = selectedCharacter;
   const [isFavorited, setIsFavorited] = useState(null);
-  console.log('SELECTED', selectedCharacter);
+
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      const apiUrl = 'http://localhost:3000/marvel/favorites';
+      try {
+        const response = await axiosPost(apiUrl, {
+          selectedCharacter,
+          user,
+          action: 'fetch'
+        });
+        const isCharacterFavorited = user && user.favorites && user.favorites.includes(response.data.id);
+        setIsFavorited(isCharacterFavorited);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchFavorites();
+  }, [selectedCharacter, user]);
+
   const handleFavorites = async () => {
     const apiUrl = 'http://localhost:3000/marvel/favorites';
+    console.log('favorites button', user);
     try {
       const response = await axiosPost(apiUrl, {
         selectedCharacter,

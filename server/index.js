@@ -280,7 +280,6 @@ app.post('/marvel/favorites', async (req, res, next) => {
     if (!characterId) {
       const newCharacter = await addNewCharacter(selectedCharacter);
       characterId = newCharacter.id;
-      console.log('HOW', characterId);
     }
 
     const userId = await getUserId(user.username);

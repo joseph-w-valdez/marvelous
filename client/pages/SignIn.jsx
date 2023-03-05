@@ -23,8 +23,8 @@ const SignIn = ({ onMount }) => {
     };
     axiosPost(apiUrl, data)
       .then((res) => {
-        console.log(res);
-        setUser({ username: data.username, pictureUrl: res.data.profilePictureUrl });
+        console.log('signed in', res.data);
+        setUser({ username: data.username, pictureUrl: res.data.profilePictureUrl, favorites: res.data.favoritesList });
         setAuthToken(res.data.token);
         setSuccessMessage('Signed-in successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
       })
