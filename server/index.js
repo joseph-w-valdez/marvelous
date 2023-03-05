@@ -190,86 +190,80 @@ app.post('/marvel/demo', (req, res, next) => {
     });
 });
 
-app.post('/marvel/favorites', (req, res, next) => {
-  const { selectedCharacter, user, action } = req.body;
-  console.log('USER', user);
-  if (!selectedCharacter) {
-    throw new ClientError(400, 'selectedCharacter is a required field');
-  }
-  db.query(`
+// function to add a new character to the database
+async function addNewCharacter(selectedCharacter) {
+  const result = await db.query(`
+    INSERT INTO "characters" ("name", "description", "imageUrl", "comicAppearances")
+    VALUES ($1, $2, $3, $4)
+    RETURNING "id"
+  `, [selectedCharacter.name, selectedCharacter.description, selectedCharacter.thumbnailUrl, selectedCharacter.comicAppearances]);
+  const [newCharacter] = result.rows;
+  return newCharacter;
+}
+
+// function to retrieve a character's id from the database
+async function getCharacterId(selectedCharacter) {
+  const result = await db.query(`
     SELECT id FROM characters WHERE name = $1
-  `, [selectedCharacter.name])
-    .then((result) => {
-      if (result.rows.length > 0) {
-        // The character already exists, so use its id
-        const [existingCharacter] = result.rows;
-        const characterId = existingCharacter.id;
-        db.query(`
-          SELECT id FROM users WHERE username = $1
-        `, [user.username])
-          .then((result) => {
-            const [currentUser] = result.rows;
-            const favoriteData = [currentUser.id, characterId];
-            if (action === 'unfavorite') {
-              db.query(`
-                DELETE FROM favorites
-                WHERE "userId" = $1 AND "characterId" = $2
-              `, favoriteData)
-                .then(() => {
-                  res.status(200).json({ message: 'Successfully removed from favorites.' });
-                })
-                .catch((err) => next(err));
-            } else {
-              db.query(`
-                INSERT INTO favorites ("userId", "characterId")
-                VALUES ($1, $2)
-                ON CONFLICT ("userId", "characterId")
-                DO UPDATE SET "userId" = EXCLUDED."userId", "characterId" = EXCLUDED."characterId";
-              `, favoriteData)
-                .then(() => {
-                  res.status(201).json(existingCharacter);
-                })
-                .catch((err) => next(err));
-            }
-          })
-          .catch((err) => next(err));
+  `, [selectedCharacter.name]);
+  if (result.rows.length > 0) {
+    const [existingCharacter] = result.rows;
+    return existingCharacter.id;
+  }
+  return null;
+}
+
+// function to retrieve a user's id from the database
+async function getUserId(username) {
+  const result = await db.query(`
+    SELECT id FROM users WHERE username = $1
+  `, [username]);
+  const [currentUser] = result.rows;
+  return currentUser.id;
+}
+
+// function to add a favorite to the database
+async function addFavorite(userId, characterId) {
+  const favoriteData = [userId, characterId];
+  await db.query(`
+    INSERT INTO favorites ("userId", "characterId")
+    VALUES ($1, $2)
+    ON CONFLICT ("userId", "characterId")
+    DO UPDATE SET "userId" = EXCLUDED."userId", "characterId" = EXCLUDED."characterId";
+  `, favoriteData);
+}
+
+app.post('/marvel/favorites', async (req, res, next) => {
+  try {
+    const { selectedCharacter, user, action } = req.body;
+    if (!selectedCharacter) {
+      throw new ClientError(400, 'selectedCharacter is a required field');
+    }
+
+    let characterId = await getCharacterId(selectedCharacter);
+    if (!characterId) {
+      const newCharacter = await addNewCharacter(selectedCharacter);
+      characterId = newCharacter.id;
+    }
+
+    const userId = await getUserId(user.username);
+    if (action === 'unfavorite') {
+      await db.query(`
+        DELETE FROM favorites
+        WHERE "userId" = $1 AND "characterId" = $2
+      `, [userId, characterId]);
+      res.status(200).json({ message: 'Successfully removed from favorites.' });
+    } else {
+      await addFavorite(userId, characterId);
+      if (characterId) {
+        res.status(201).json({ id: characterId });
       } else {
-        // The character doesn't exist, so insert it and use its new id
-        db.query(`
-          INSERT INTO "characters" ("name", "description", "imageUrl", "comicAppearances")
-          VALUES ($1, $2, $3, $4)
-          RETURNING "id"
-        `, [selectedCharacter.name, selectedCharacter.description, selectedCharacter.thumbnailUrl, selectedCharacter.comicAppearances])
-          .then((result) => {
-            const [newCharacter] = result.rows;
-            db.query(`
-              SELECT id FROM users WHERE username = $1
-            `, [user.username])
-              .then((result) => {
-                const [currentUser] = result.rows;
-                const favoriteData = [currentUser.id, newCharacter.id];
-                if (action === 'unfavorite') {
-                  // We can't delete a favorite that doesn't exist, so just return a success message
-                  res.status(200).json({ message: 'Successfully removed from favorites.' });
-                } else {
-                  db.query(`
-                    INSERT INTO favorites ("userId", "characterId")
-                    VALUES ($1, $2)
-                    ON CONFLICT ("userId", "characterId")
-                    DO UPDATE SET "userId" = EXCLUDED."userId", "characterId" = EXCLUDED."characterId";
-                  `, favoriteData)
-                    .then(() => {
-                      res.status(201).json(newCharacter);
-                    })
-                    .catch((err) => next(err));
-                }
-              })
-              .catch((err) => next(err));
-          })
-          .catch((err) => next(err));
+        throw new Error('Unable to retrieve character ID');
       }
-    })
-    .catch((err) => next(err));
+    }
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.get('*', (req, res) => {
