@@ -133,6 +133,17 @@ app.post('/marvel/upload', uploadsMiddleware, (req, res, next) => {
   res.status(200).send(req.file.filename);
 });
 
+async function getFavoriteCharacterIds(userId) {
+  const sql = `
+    SELECT "characterId"
+    FROM "favorites"
+    WHERE "userId" = $1
+  `;
+  const params = [userId];
+  const result = await db.query(sql, params);
+  return result.rows.map((row) => row.characterId);
+}
+
 app.post('/marvel/sign-in', (req, res, next) => {
   const { username, password } = req.body;
 
@@ -141,35 +152,33 @@ app.post('/marvel/sign-in', (req, res, next) => {
   }
 
   const sql = `
-    select "id",
+    SELECT "id",
            "passwordHash",
            "profilePictureUrl"
-      from "users"
-     where "username" = $1
+      FROM "users"
+     WHERE "username" = $1
   `;
   const params = [username];
 
   db.query(sql, params)
-    .then((result) => {
+    .then(async (result) => {
       const [user] = result.rows;
-
       if (!user) {
         throw new ClientError(401, 'invalid login');
       }
 
-      // If user is found, verify the provided password
       const { id, passwordHash, profilePictureUrl } = user;
+      const favoritesList = await getFavoriteCharacterIds(user.id);
+
       return argon2.verify(passwordHash, password)
         .then((isMatching) => {
-
           // If password is invalid, throw an error
           if (!isMatching) {
             throw new ClientError(401, 'invalid login');
           }
-
           // If password is valid, create a JWT token and send it as a response
           const token = jwt.sign({ userId: id }, process.env.TOKEN_SECRET);
-          res.status(200).json({ token, profilePictureUrl });
+          res.status(200).json({ token, profilePictureUrl, favoritesList });
         });
     })
     .catch((err) => {
@@ -178,7 +187,7 @@ app.post('/marvel/sign-in', (req, res, next) => {
     });
 });
 
-app.post('/marvel/demo', (req, res, next) => {
+app.post('/marvel/demo', async (req, res, next) => {
   // Hardcoded username and password for demo purposes
   const username = 'didyouknow';
   const password = 'Vaporeon!1';
@@ -193,28 +202,29 @@ app.post('/marvel/demo', (req, res, next) => {
   `;
   const params = [username];
 
-  db.query(sql, params)
-    .then((result) => {
-      const [user] = result.rows;
-      if (!user) {
-        throw new ClientError(401, 'invalid login');
-      }
+  try {
+    const result = await db.query(sql, params);
+    const [user] = result.rows;
 
-      const { id, passwordHash, profilePictureUrl } = user;
-      return argon2
-        .verify(passwordHash, password)
-        .then((isMatching) => {
-          if (!isMatching) {
-            throw new ClientError(401, 'invalid login');
-          }
-          const token = jwt.sign({ userId: id }, process.env.TOKEN_SECRET);
-          res.status(200).json({ token, profilePictureUrl, username });
-        });
-    })
-    .catch((err) => {
-      console.error('argon2.verify error', err);
-      next(err);
-    });
+    if (!user) {
+      throw new ClientError(401, 'invalid login');
+    }
+
+    const { id, passwordHash, profilePictureUrl } = user;
+    const favoritesList = await getFavoriteCharacterIds(user.id);
+    console.log('faves', favoritesList);
+
+    const isMatching = await argon2.verify(passwordHash, password);
+    if (!isMatching) {
+      throw new ClientError(401, 'invalid login');
+    }
+
+    const token = jwt.sign({ userId: id }, process.env.TOKEN_SECRET);
+    res.status(200).json({ token, profilePictureUrl, username, favoritesList });
+  } catch (err) {
+    console.error('argon2.verify error', err);
+    next(err);
+  }
 });
 
 // function to add a new character to the database

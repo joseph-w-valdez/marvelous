@@ -23,6 +23,7 @@ const SignIn = ({ onMount }) => {
     };
     axiosPost(apiUrl, data)
       .then((res) => {
+        console.log(res);
         setUser({ username: data.username, pictureUrl: res.data.profilePictureUrl });
         setAuthToken(res.data.token);
         setSuccessMessage('Signed-in successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
@@ -44,6 +45,7 @@ const SignIn = ({ onMount }) => {
     const apiUrl = 'http://localhost:3000/marvel/demo';
     axiosPost(apiUrl)
       .then((res) => {
+        console.log(res);
         setUser({ username: res.data.username, pictureUrl: res.data.profilePictureUrl });
         setAuthToken(res.data.token);
         setSuccessMessage('Signed-in successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
