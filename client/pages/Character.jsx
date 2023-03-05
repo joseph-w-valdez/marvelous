@@ -3,7 +3,7 @@ import { useUser } from '../contexts/UserContext';
 import axiosPost from '../utils/AxiosPost';
 
 const Character = ({ selectedCharacter, onMount }) => {
-  const { user } = useUser();
+  const { user, setUser } = useUser();
   onMount();
 
   if (!selectedCharacter) {
@@ -14,7 +14,7 @@ const Character = ({ selectedCharacter, onMount }) => {
       comicAppearances: '2660'
     };
   }
-  const { name, description, thumbnailUrl, comicAppearances } = selectedCharacter;
+  const { name, description, thumbnailUrl, comicAppearances, id } = selectedCharacter;
   const [isFavorited, setIsFavorited] = useState(null);
 
   useEffect(() => {
@@ -26,7 +26,9 @@ const Character = ({ selectedCharacter, onMount }) => {
           user,
           action: 'fetch'
         });
-        const isCharacterFavorited = user && user.favorites && user.favorites.includes(response.data.id);
+        const characterId = response.data.id;
+        const isCharacterFavorited = user && user.favorites && user.favorites.includes(characterId);
+
         setIsFavorited(isCharacterFavorited);
       } catch (error) {
         console.error(error);
@@ -37,7 +39,6 @@ const Character = ({ selectedCharacter, onMount }) => {
 
   const handleFavorites = async () => {
     const apiUrl = 'http://localhost:3000/marvel/favorites';
-    console.log('favorites button', user);
     try {
       const response = await axiosPost(apiUrl, {
         selectedCharacter,
