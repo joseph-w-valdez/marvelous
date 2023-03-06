@@ -60,7 +60,9 @@ export default function Navbar() {
           </span>
         </Link>
       </div>
-      <div>
+      <div className='text-white flex flex-wrap items-center'>
+        <Link to='/'><p className='mr-4 hidden sm:block'>Search</p></Link>
+        <Link to='/favorites'><p className='mr-4 hidden sm:block'>Favorites</p></Link>
         {renderProfileIcon()}
         <ProfileMenu profileMenu={isProfileMenuOpen} />
       </div>
