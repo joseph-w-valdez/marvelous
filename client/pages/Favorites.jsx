@@ -20,7 +20,6 @@ const Favorites = ({ onMount }) => {
       try {
         setLoading(true);
         const response = await axiosPost(apiUrl, { favorites: user.favorites });
-        console.log('response', response.data);
         setCharacters(response.data);
       } catch (error) {
         console.error(error);
@@ -43,14 +42,14 @@ const Favorites = ({ onMount }) => {
           /* if there are no favorites show a relevant message with a link to the search page */
         : characters.length === 0
           ? (
-            <div className="w-full text-center text-2xl">
+            <div className="w-full  text-center text-2xl">
               No favorites found! Click <Link to='/' className='text-blue-500 underline'>here</Link> to search for characters to add!
             </div>
             )
             /* if there are favorites, go through each item and render them with this format */
           : (
               characters.map((character) => (
-                <div key={character.id} className='flex flex-wrap w-full justify-center mb-4'>
+                <div key={character.id} className='flex flex-wrap justify-center mb-4 w-full lg:w-1/2 xl:w-1/3'>
                   <div className="max-w-sm">
                     <img
                 src={character.imageUrl}
