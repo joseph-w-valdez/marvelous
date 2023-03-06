@@ -14,7 +14,7 @@ const Character = ({ selectedCharacter, onMount }) => {
       comicAppearances: '2660'
     };
   }
-  const { name, description, thumbnailUrl, comicAppearances, id } = selectedCharacter;
+  const { name, description, thumbnailUrl, comicAppearances } = selectedCharacter;
   const [isFavorited, setIsFavorited] = useState(null);
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const Character = ({ selectedCharacter, onMount }) => {
       }
     };
     fetchFavorites();
-  }, [selectedCharacter, user]);
+  }, []);
 
   const handleFavorites = async () => {
     const apiUrl = 'http://localhost:3000/marvel/favorites';
@@ -45,9 +45,7 @@ const Character = ({ selectedCharacter, onMount }) => {
         user,
         action: isFavorited ? 'unfavorite' : 'favorite'
       });
-      console.log('HERE', response.data);
-      console.log('isFavorited?', isFavorited);
-
+      console.log('RES', response);
       if (!isFavorited) {
         const updatedFavorites = [...user.favorites, response.data.id];
         setUser((prevState) => ({ ...prevState, favorites: updatedFavorites }));
@@ -58,6 +56,7 @@ const Character = ({ selectedCharacter, onMount }) => {
         console.log('unfavoriting', user.favorites, 'user', user);
       }
       setIsFavorited(!isFavorited);
+      console.log('favorite end status', user);
     } catch (error) {
       console.error(error);
     }
