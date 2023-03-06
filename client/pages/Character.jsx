@@ -19,7 +19,7 @@ const Character = ({ selectedCharacter, onMount }) => {
 
   useEffect(() => {
     const fetchFavorites = async () => {
-      const apiUrl = 'http://localhost:3000/marvel/favorites';
+      const apiUrl = 'http://localhost:3000/marvel/toggleFavorites';
       try {
         const response = await axiosPost(apiUrl, {
           selectedCharacter,
@@ -28,35 +28,31 @@ const Character = ({ selectedCharacter, onMount }) => {
         });
         const characterId = response.data.id;
         const isCharacterFavorited = user && user.favorites && user.favorites.includes(characterId);
-
         setIsFavorited(isCharacterFavorited);
       } catch (error) {
         console.error(error);
       }
     };
     fetchFavorites();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleFavorites = async () => {
-    const apiUrl = 'http://localhost:3000/marvel/favorites';
+    const apiUrl = 'http://localhost:3000/marvel/toggleFavorites';
     try {
       const response = await axiosPost(apiUrl, {
         selectedCharacter,
         user,
         action: isFavorited ? 'unfavorite' : 'favorite'
       });
-      console.log('RES', response);
       if (!isFavorited) {
         const updatedFavorites = [...user.favorites, response.data.id];
         setUser((prevState) => ({ ...prevState, favorites: updatedFavorites }));
-        console.log('favoriting', user.favorites, 'user', user);
       } else {
         const updatedFavorites = user.favorites.filter((favoriteId) => favoriteId !== response.data.id);
         setUser((prevState) => ({ ...prevState, favorites: updatedFavorites }));
-        console.log('unfavoriting', user.favorites, 'user', user);
       }
       setIsFavorited(!isFavorited);
-      console.log('favorite end status', user);
     } catch (error) {
       console.error(error);
     }

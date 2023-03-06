@@ -269,7 +269,7 @@ async function addFavorite(userId, characterId) {
   `, favoriteData);
 }
 
-app.post('/marvel/favorites', async (req, res, next) => {
+app.post('/marvel/toggleFavorites', async (req, res, next) => {
   try {
     const { selectedCharacter, user, action } = req.body;
     if (!selectedCharacter) {
@@ -299,6 +299,29 @@ app.post('/marvel/favorites', async (req, res, next) => {
     }
   } catch (err) {
     next(err);
+  }
+});
+
+app.post('/marvel/getfavorites', authorizationMiddleware, async (req, res, next) => {
+  try {
+    const { favorites } = req.body;
+    if (!favorites || !Array.isArray(favorites)) {
+      throw new ClientError(400, 'favorites must be an array');
+    }
+    if (favorites.length === 0) {
+      // If the favorites array is empty, return an empty response
+      res.status(200).json([]);
+      return;
+    }
+    // query the characters table for all characters with matching id values from the req
+    const { rows } = await db.query(
+      'SELECT * FROM characters WHERE id = ANY($1::int[])',
+      [favorites]
+    );
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error(error);
+    next(error);
   }
 });
 
