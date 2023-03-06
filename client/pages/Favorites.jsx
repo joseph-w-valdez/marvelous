@@ -3,8 +3,10 @@ import { useUser } from '../contexts/UserContext';
 import axiosPost from '../utils/AxiosPost';
 import Button from '../components/Button';
 import { Link, useNavigate } from 'react-router-dom';
+import { ScrollToTopOnPageChange } from '../utils/ScrollToTop';
 
 const Favorites = ({ onMount }) => {
+  ScrollToTopOnPageChange();
   const { user } = useUser();
   const [characters, setCharacters] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -28,7 +30,7 @@ const Favorites = ({ onMount }) => {
     };
     fetchFavorites();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [navigate]);
 
   return (
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>

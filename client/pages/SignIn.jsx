@@ -4,12 +4,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../contexts/UserContext';
 import axiosPost from '../utils/AxiosPost';
 import { setAuthToken } from '../utils/AuthToken';
+import { ScrollToTopOnPageChange } from '../utils/ScrollToTop';
 
 const SignIn = ({ onMount }) => {
   const [usernameInputValue, setUsernameInputValue] = useState('');
   const [passwordInputValue, setPasswordInputValue] = useState('');
   const [successMessage, setSuccessMessage] = useState(undefined);
   onMount();
+  ScrollToTopOnPageChange();
 
   const navigate = useNavigate();
   const { setUser } = useUser();

@@ -7,6 +7,7 @@ import InputField from '../components/InputField';
 import FileInput from '../components/FileInput';
 import handleRegistration from '../components/handleRegistration';
 import { usernameValidation, emailValidation, passwordValidation } from '../components/validation';
+import { ScrollToTopOnPageChange } from '../utils/ScrollToTop';
 
 const Register = ({ onMount }) => {
   const [errorMessage, setErrorMessage] = useState(undefined);
@@ -14,6 +15,7 @@ const Register = ({ onMount }) => {
   const { control, register, handleSubmit, watch, formState: { errors } } = useForm();
   const navigate = useNavigate();
 
+  ScrollToTopOnPageChange();
   onMount(); // Call the onMount function passed as a prop, which sets the subnavbar text
 
   const onSubmit = async (data) => {
