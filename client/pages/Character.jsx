@@ -27,6 +27,7 @@ const Character = ({ selectedCharacter }) => {
   }
 
   const { name, description, imageUrl, comicAppearances } = selectedCharacter;
+
   const [isFavorited, setIsFavorited] = useState(null);
 
   // Fetch the user's favorites for the selected character on mount
@@ -54,6 +55,7 @@ const Character = ({ selectedCharacter }) => {
   const handleFavorites = useCallback(async () => {
     const apiUrl = 'http://localhost:3000/marvel/toggleFavorites';
     try {
+      console.log('character test', selectedCharacter);
       const response = await axiosPost(apiUrl, {
         selectedCharacter,
         user,

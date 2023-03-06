@@ -232,7 +232,7 @@ async function addNewCharacter(selectedCharacter) {
     INSERT INTO "characters" ("name", "description", "imageUrl", "comicAppearances")
     VALUES ($1, $2, $3, $4)
     RETURNING "id"
-  `, [selectedCharacter.name, selectedCharacter.description, selectedCharacter.thumbnailUrl, selectedCharacter.comicAppearances]);
+  `, [selectedCharacter.name, selectedCharacter.description, selectedCharacter.imageUrl, selectedCharacter.comicAppearances]);
   const [newCharacter] = result.rows;
   return newCharacter;
 }
