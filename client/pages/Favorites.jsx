@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 const Favorites = ({ onMount }) => {
   const { user, setUser } = useUser();
   const [characters, setCharacters] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   onMount(); // changes the subnavbar text
 
@@ -14,11 +15,14 @@ const Favorites = ({ onMount }) => {
     const fetchFavorites = async () => {
       const apiUrl = 'http://localhost:3000/marvel/getFavorites';
       try {
+        setLoading(true);
         const response = await axiosPost(apiUrl, { favorites: user.favorites });
         console.log('response', response.data);
         setCharacters(response.data);
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchFavorites();
@@ -28,28 +32,32 @@ const Favorites = ({ onMount }) => {
   return (
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
       <h1 className='text-4xl mb-4 w-full text-center'>Favorite Characters:</h1>
-      {characters.length === 0
+      {loading
         ? (
-          <div className="w-full text-center text-2xl">
-            No favorites found! Click <Link to='/' className='text-blue-500 underline'>here</Link> to search for characters to add!
-          </div>
+          <div className="w-full text-center text-2xl">Loading...</div>
           )
-        : (
-            characters.map((character) => (
-              <div key={character.id} className='flex flex-wrap w-full justify-center mb-4'>
-                <div className="max-w-sm">
-                  <img
+        : characters.length === 0
+          ? (
+            <div className="w-full text-center text-2xl">
+              No favorites found! Click <Link to='/' className='text-blue-500 underline'>here</Link> to search for characters to add!
+            </div>
+            )
+          : (
+              characters.map((character) => (
+                <div key={character.id} className='flex flex-wrap w-full justify-center mb-4'>
+                  <div className="max-w-sm">
+                    <img
                 src={character.imageUrl}
                 alt={character.name}
                 className='border-18 border-red-border w-full object-contain'
                 style={{ borderImage: 'linear-gradient(to bottom, #B13434, #7F1D1D) 1' }}
               />
-                  <h1 className='text-3xl mt-2'>{character.name}</h1>
-                  <Button text='VIEW PROFILE' />
+                    <h1 className='text-3xl mt-2'>{character.name}</h1>
+                    <Button text='VIEW PROFILE' />
+                  </div>
                 </div>
-              </div>
-            ))
-          )}
+              ))
+            )}
     </div>
   );
 };
