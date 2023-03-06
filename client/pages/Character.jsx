@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../contexts/UserContext';
 import axiosPost from '../utils/AxiosPost';
+import { useLocation } from 'react-router-dom';
 
 const Character = ({ selectedCharacter, onMount }) => {
   const { user, setUser } = useUser();
   onMount();
+  const location = useLocation();
+
+  if (location && location.state.character) {
+    selectedCharacter = location.state.character;
+  }
 
   if (!selectedCharacter) {
     selectedCharacter = {
       name: 'Iron Man',
       description: 'Wounded, captured and forced to build a weapon by his enemies, billionaire industrialist Tony Stark instead created an advanced suit of armor to save his life and escape captivity. Now with a new outlook on life, Tony uses his money and intelligence to make the world a safer, better place as Iron Man.',
-      thumbnailUrl: 'http://i.annihil.us/u/prod/marvel/i/mg/9/c0/527bb7b37ff55.jpg',
+      imageUrl: 'http://i.annihil.us/u/prod/marvel/i/mg/9/c0/527bb7b37ff55.jpg',
       comicAppearances: '2660'
     };
   }
-  const { name, description, thumbnailUrl, comicAppearances } = selectedCharacter;
+  const { name, description, imageUrl, comicAppearances } = selectedCharacter;
   const [isFavorited, setIsFavorited] = useState(null);
 
   useEffect(() => {
@@ -64,7 +70,7 @@ const Character = ({ selectedCharacter, onMount }) => {
       <div className='basis-full' />
       <div className="max-w-sm">
         <img
-          src={thumbnailUrl}
+          src={imageUrl}
           alt={name}
           className='border-18 border-red-border w-full object-contain'
           style={{ borderImage: 'linear-gradient(to bottom, #B13434, #7F1D1D) 1' }}

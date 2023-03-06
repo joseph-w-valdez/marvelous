@@ -52,7 +52,7 @@ app.get('/marvel/character/:characterName', async (req, res, next) => {
     const characterData = {
       name,
       description: description || 'None Available',
-      thumbnailUrl: characterThumbnailUrl,
+      imageUrl: characterThumbnailUrl,
       comicAppearances: characterComicAppearances
     };
     // Send the character data as a JSON response

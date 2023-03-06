@@ -5,9 +5,10 @@ import Button from '../components/Button';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Favorites = ({ onMount }) => {
-  const { user, setUser } = useUser();
+  const { user } = useUser();
   const [characters, setCharacters] = useState([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   onMount(); // changes the subnavbar text
 
@@ -32,16 +33,19 @@ const Favorites = ({ onMount }) => {
   return (
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
       <h1 className='text-4xl mb-4 w-full text-center'>Favorite Characters:</h1>
+      {/* show the loading screen while waiting to retrieve favorites data */}
       {loading
         ? (
           <div className="w-full text-center text-2xl">Loading...</div>
           )
+          /* if there are no favorites show a relevant message with a link to the search page */
         : characters.length === 0
           ? (
             <div className="w-full text-center text-2xl">
               No favorites found! Click <Link to='/' className='text-blue-500 underline'>here</Link> to search for characters to add!
             </div>
             )
+            /* if there are favorites, go through each item and render them with this format */
           : (
               characters.map((character) => (
                 <div key={character.id} className='flex flex-wrap w-full justify-center mb-4'>
@@ -53,7 +57,7 @@ const Favorites = ({ onMount }) => {
                 style={{ borderImage: 'linear-gradient(to bottom, #B13434, #7F1D1D) 1' }}
               />
                     <h1 className='text-3xl mt-2'>{character.name}</h1>
-                    <Button text='VIEW PROFILE' />
+                    <Button text='VIEW PROFILE' onClick={() => navigate('/character', { state: { character } })} />
                   </div>
                 </div>
               ))
