@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import SubNavbar from './components/SubNavbar';
 import Navbar from './components/Navbar';
@@ -10,12 +10,18 @@ import Register from './pages/Register';
 import Favorites from './pages/Favorites';
 import TermsOfService from './pages/Terms';
 import PrivacyPolicy from './pages/Policy';
+import konamiCodeListener from './utils/EasterEgg';
 
 import { UserProvider } from './contexts/UserContext';
 
 function App() {
   const [characterData, setCharacterData] = useState(undefined);
   const [subNavbarText, setSubNavBarText] = useState('SEARCH');
+
+  useEffect(() => {
+    const cleanup = konamiCodeListener();
+    return cleanup;
+  }, []);
 
   return (
     <UserProvider>
@@ -32,6 +38,7 @@ function App() {
                 <Route path="/register" element={<Register onMount={() => setSubNavBarText('ACCOUNT')} />} />
                 <Route path="/favorites" element={<Favorites onMount={() => setSubNavBarText('FAVORITES')} />} />
                 <Route path="/Terms" element={<TermsOfService onMount={() => setSubNavBarText('ACCOUNT')} />} />
+                <Route path="/Policy" element={<PrivacyPolicy onMount={() => setSubNavBarText('ACCOUNT')} />} />
                 <Route path="/Policy" element={<PrivacyPolicy onMount={() => setSubNavBarText('ACCOUNT')} />} />
               </Routes>
             </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const TermsOfService = () => {
+
   return (
     <div className='text-white flex flex-wrap justify-center'>
       <h1 className='bold text-center w-full'>
