@@ -35,8 +35,8 @@ const Favorites = ({ onMount }) => {
 
   if (!user || !user.username) {
     return (
-      <div className="text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center">
-        You are not currently logged in! Click&nbsp;<Link to='/sign-in' className='text-blue-500 underline'>here</Link>&nbsp;to login!
+      <div className="text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center text-center">
+        <p>You are not currently logged in! Click&nbsp;<Link to='/sign-in' className='text-blue-500 underline'>here</Link>&nbsp;to login!</p>
       </div>
     );
   }
