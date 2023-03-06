@@ -33,7 +33,7 @@ const Favorites = ({ onMount }) => {
 
   return (
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
-      <h1 className='text-3xl mb-4 w-full text-center'>Favorite Characters:</h1>
+      <h1 className='text-2xl sm:text-4xl mb-4 w-full text-center'>Favorite Characters:</h1>
       {/* show the loading screen while waiting to retrieve favorites data */}
       {loading
         ? (
@@ -42,7 +42,7 @@ const Favorites = ({ onMount }) => {
           /* if there are no favorites show a relevant message with a link to the search page */
         : characters.length === 0
           ? (
-            <div className="w-full  text-center text-xl">
+            <div className="w-full  text-center text-lg">
               No favorites found! Click <Link to='/' className='text-blue-500 underline'>here</Link> to search for characters to add!
             </div>
             )
@@ -57,7 +57,7 @@ const Favorites = ({ onMount }) => {
                 className='border-18 border-red-border w-full object-contain'
                 style={{ borderImage: 'linear-gradient(to bottom, #B13434, #7F1D1D) 1' }}
               />
-                    <h1 className='text-3xl mt-2'>{character.name}</h1>
+                    <h1 className='text-2xl sm:text-3xl mt-2'>{character.name}</h1>
                     <Button text='VIEW PROFILE' onClick={() => navigate('/character', { state: { character } })} />
                   </div>
                 </div>
