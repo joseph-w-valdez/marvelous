@@ -1,30 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useUser } from '../contexts/UserContext';
 import axiosPost from '../utils/AxiosPost';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { ScrollToTopOnPageChange } from '../utils/ScrollToTop';
 
-const Character = ({ selectedCharacter, onMount }) => {
+const Character = ({ selectedCharacter }) => {
   const { user, setUser } = useUser();
   const location = useLocation();
-  ScrollToTopOnPageChange();
-  onMount();
 
-  if (location && location.state.character) {
+  // Scroll to the top of the page on mount and when the location changes
+  ScrollToTopOnPageChange();
+
+  // If there's a character in the location state, use it as the selected character
+  if (location && location.state && location.state.character) {
     selectedCharacter = location.state.character;
   }
 
+  // If there's no selected character, use a default one
   if (!selectedCharacter) {
     selectedCharacter = {
       name: 'Iron Man',
       description: 'Wounded, captured and forced to build a weapon by his enemies, billionaire industrialist Tony Stark instead created an advanced suit of armor to save his life and escape captivity. Now with a new outlook on life, Tony uses his money and intelligence to make the world a safer, better place as Iron Man.',
-      imageUrl: 'http://i.annihil.us/u/prod/marvel/i/mg/9/c0/527bb7b37ff55.jpg',
+      imageUrl: 'https://i.annihil.us/u/prod/marvel/i/mg/9/c0/527bb7b37ff55.jpg',
       comicAppearances: '2660'
     };
   }
+
   const { name, description, imageUrl, comicAppearances } = selectedCharacter;
   const [isFavorited, setIsFavorited] = useState(null);
 
+  // Fetch the user's favorites for the selected character on mount
   useEffect(() => {
     const fetchFavorites = async () => {
       const apiUrl = 'http://localhost:3000/marvel/toggleFavorites';
@@ -35,6 +40,7 @@ const Character = ({ selectedCharacter, onMount }) => {
           action: 'fetch'
         });
         const characterId = response.data.id;
+        // Check if the user has favorited this character
         const isCharacterFavorited = user && user.favorites && user.favorites.includes(characterId);
         setIsFavorited(isCharacterFavorited);
       } catch (error) {
@@ -42,10 +48,10 @@ const Character = ({ selectedCharacter, onMount }) => {
       }
     };
     fetchFavorites();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // Add an empty dependency array to avoid an infinite loop
 
-  const handleFavorites = async () => {
+  // Toggle the user's favorite status for the selected character
+  const handleFavorites = useCallback(async () => {
     const apiUrl = 'http://localhost:3000/marvel/toggleFavorites';
     try {
       const response = await axiosPost(apiUrl, {
@@ -64,7 +70,7 @@ const Character = ({ selectedCharacter, onMount }) => {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [isFavorited, selectedCharacter, setUser, user]);
 
   return (
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
@@ -90,7 +96,9 @@ const Character = ({ selectedCharacter, onMount }) => {
               </>
               )
             : (
-              <p className="text-blue-500">Sign in to add to favorites!</p>
+              <Link to='/sign-in'>
+                <p className="text-blue-500">Sign in to add to favorites!</p>
+              </Link>
               )}
         </div>
 
