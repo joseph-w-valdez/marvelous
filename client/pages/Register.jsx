@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 import Button from '../components/Button';
 import InputField from '../components/InputField';
@@ -65,7 +65,7 @@ const Register = ({ onMount }) => {
         </form>
         <div className='basis-full' />
         <p className='text-white text-sm'>
-          By creating an account, you agree to our <a href="" className='text-blue-500 underline'>Terms of Use</a> and our <a href="" className='text-blue-500 underline'> Privacy Policy</a>
+          By creating an account, you agree to our <Link to="/terms" className='text-blue-500 underline'>Terms of Use</Link> and our <Link to="/policy" className='text-blue-500 underline'>Privacy Policy</Link>
         </p>
       </>)
       }

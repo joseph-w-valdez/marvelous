@@ -5,10 +5,10 @@ import { useLocation } from 'react-router-dom';
 import { ScrollToTopOnPageChange } from '../utils/ScrollToTop';
 
 const Character = ({ selectedCharacter, onMount }) => {
-  ScrollToTopOnPageChange();
   const { user, setUser } = useUser();
-  onMount();
   const location = useLocation();
+  ScrollToTopOnPageChange();
+  onMount();
 
   if (location && location.state.character) {
     selectedCharacter = location.state.character;

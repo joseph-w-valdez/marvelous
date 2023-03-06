@@ -8,6 +8,8 @@ import Character from './pages/Character';
 import SignIn from './pages/SignIn';
 import Register from './pages/Register';
 import Favorites from './pages/Favorites';
+import TermsOfService from './pages/Terms';
+import PrivacyPolicy from './pages/Policy';
 
 import { UserProvider } from './contexts/UserContext';
 
@@ -29,6 +31,8 @@ function App() {
                 <Route path="/sign-in" element={<SignIn onMount={() => setSubNavBarText('ACCOUNT')} />} />
                 <Route path="/register" element={<Register onMount={() => setSubNavBarText('ACCOUNT')} />} />
                 <Route path="/favorites" element={<Favorites onMount={() => setSubNavBarText('FAVORITES')} />} />
+                <Route path="/Terms" element={<TermsOfService onMount={() => setSubNavBarText('ACCOUNT')} />} />
+                <Route path="/Policy" element={<PrivacyPolicy onMount={() => setSubNavBarText('ACCOUNT')} />} />
               </Routes>
             </div>
           </div>
