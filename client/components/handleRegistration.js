@@ -11,7 +11,6 @@ const handleRegistration = async (data, setErrorMessage) => {
 
     try {
       const response = await axios.post(uploadUrl, formData);
-      console.log('SUCCESSFUL IMAGE POST', response);
       profilePictureUrl = `http://localhost:3000/images/${response.data}`;
     } catch (error) {
       console.error(error);
@@ -20,7 +19,6 @@ const handleRegistration = async (data, setErrorMessage) => {
 
   try {
     const response = await axios.post(apiUrl, { ...data, profilePictureUrl });
-    console.log('SUCCESSFUL REGISTRATION POST', response);
   } catch (error) {
     console.error(error);
     if (error.response && error.response.status === 409) {

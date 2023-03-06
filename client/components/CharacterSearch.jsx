@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import Button from './Button';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { ScrollToTopOnPageChange } from '../utils/ScrollToTop';
 
 const buttonText = 'SEARCH';
 
 const CharacterSearch = ({ onSearch }) => {
+  ScrollToTopOnPageChange();
   const [inputValue, setInputValue] = useState('');
   const [errorMessage, setErrorMessage] = useState(undefined);
   const navigate = useNavigate();
@@ -17,7 +19,7 @@ const CharacterSearch = ({ onSearch }) => {
       .then((response) => {
         onSearch(response.data);
         setErrorMessage(undefined);
-        navigate('/character'); // navigate to /character route
+        navigate('/character');
       })
       .catch((error) => {
         if (error.response && error.response.status === 404) {

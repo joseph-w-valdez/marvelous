@@ -11,10 +11,10 @@ const useUser = () => {
 };
 
 const UserProvider = ({ children }) => {
-  const [user, setUser] = useState({ username: null, pictureUrl: null });
+  const [user, setUser] = useState({ username: null, pictureUrl: null, favorites: [] });
 
   const reset = () => {
-    setUser({ username: null, pictureUrl: null });
+    setUser({ username: null, pictureUrl: null, favorites: [] });
   };
 
   const value = { user, setUser, reset };

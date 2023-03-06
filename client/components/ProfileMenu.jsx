@@ -25,13 +25,15 @@ const ProfileMenu = ({ profileMenu }) => {
   return (
     <div className={`
     w-48 h-auto rounded-md absolute right-5 text-white font-Poppins top-9 bg-[#333333]
-    pl-2 pt-1 pb-1 cursor-pointer ${profileMenu ? 'block' : 'hidden'}`
+     pt-1 pb-1 cursor-pointer ${profileMenu ? 'block' : 'hidden'}`
     } >
-      {!user.username && <Link to='/sign-in'><p>Sign In</p></Link>}
+      {!user.username && <Link to='/sign-in'><p className='pl-2'>Sign In</p></Link>}
       {user.username && (
         <div>
-          <div onClick={handleFavorites}><p>My Favorites</p></div>
-          <div onClick={handleSignOut}><p>Sign Out</p></div>
+          <div className='pl-2'>{user.username}</div>
+          <div className="w-full h-[2px] bg-[#b0bec5] mt-1 mb-2" />
+          <div className='pl-2' onClick={handleFavorites}><p>My Favorites</p></div>
+          <div className='pl-2' onClick={handleSignOut}><p>Sign Out</p></div>
         </div>)
       }
     </div>

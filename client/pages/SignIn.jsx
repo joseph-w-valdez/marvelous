@@ -4,12 +4,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../contexts/UserContext';
 import axiosPost from '../utils/AxiosPost';
 import { setAuthToken } from '../utils/AuthToken';
+import { ScrollToTopOnPageChange } from '../utils/ScrollToTop';
 
 const SignIn = ({ onMount }) => {
   const [usernameInputValue, setUsernameInputValue] = useState('');
   const [passwordInputValue, setPasswordInputValue] = useState('');
   const [successMessage, setSuccessMessage] = useState(undefined);
   onMount();
+  ScrollToTopOnPageChange();
 
   const navigate = useNavigate();
   const { setUser } = useUser();
@@ -23,7 +25,8 @@ const SignIn = ({ onMount }) => {
     };
     axiosPost(apiUrl, data)
       .then((res) => {
-        setUser({ username: data.username, pictureUrl: res.data.profilePictureUrl });
+        console.log('signed in', res.data);
+        setUser({ username: data.username, pictureUrl: res.data.profilePictureUrl, favorites: res.data.favoritesList });
         setAuthToken(res.data.token);
         setSuccessMessage('Signed-in successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
       })
@@ -44,6 +47,7 @@ const SignIn = ({ onMount }) => {
     const apiUrl = 'http://localhost:3000/marvel/demo';
     axiosPost(apiUrl)
       .then((res) => {
+        console.log(res);
         setUser({ username: res.data.username, pictureUrl: res.data.profilePictureUrl });
         setAuthToken(res.data.token);
         setSuccessMessage('Signed-in successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
