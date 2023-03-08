@@ -55,17 +55,14 @@ const Character = ({ selectedCharacter }) => {
   const handleFavorites = useCallback(async () => {
     const apiUrl = 'http://localhost:3000/marvel/toggleFavorites';
     try {
-      console.log('character test', selectedCharacter);
       const response = await axiosPost(apiUrl, {
         selectedCharacter,
         user,
         action: isFavorited ? 'unfavorite' : 'favorite'
       });
       if (!isFavorited) {
-        console.log('is fave', user);
         const updatedFavorites = [...user.favorites ?? [], response.data.id];
         setUser((prevState) => ({ ...prevState, favorites: updatedFavorites }));
-        console.log('user', user);
       } else {
         const updatedFavorites = user.favorites.filter((favoriteId) => favoriteId !== response.data.id);
         setUser((prevState) => ({ ...prevState, favorites: updatedFavorites }));

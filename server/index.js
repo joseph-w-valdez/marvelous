@@ -22,21 +22,21 @@ const db = new pg.Pool({
 
 const app = express();
 
-const API_PUBLIC_KEY = 'b8483fd7fba99cd20a9fefc4e5106f88';
-const API_PRIVATE_KEY = 'c2746ff73c66112e104538fe16622cbb21205d8f';
-
 app.use(staticMiddleware);
 app.use(express.json());
 
+console.log('pub key', process.env.API_PUBLIC_KEY, 'priv key', process.env.API_PRIVATE_KEY);
+
 app.get('/marvel/character/:characterName', async (req, res, next) => {
   try {
+    console.log('process in GET', process.env.API_PUBLIC_KEY);
     // Get the timestamp and hash for the API request
     const timestamp = Date.now().toString();
-    const hash = crypto.createHash('md5').update(timestamp + API_PRIVATE_KEY + API_PUBLIC_KEY).digest('hex');
+    const hash = crypto.createHash('md5').update(timestamp + process.env.API_PRIVATE_KEY + process.env.API_PUBLIC_KEY).digest('hex');
     // Get the character name from the request parameters
     const characterName = req.params.characterName;
     // Construct the URL for the API request
-    const url = `https://gateway.marvel.com/v1/public/characters?apikey=${API_PUBLIC_KEY}&ts=${timestamp}&hash=${hash}&name=${encodeURIComponent(characterName)}`;
+    const url = `https://gateway.marvel.com/v1/public/characters?apikey=${process.env.API_PUBLIC_KEY}&ts=${timestamp}&hash=${hash}&name=${encodeURIComponent(characterName)}`;
     // Send the API request and get the results
     const { data: { data: { results } } } = await axios.get(url);
     // If no results are found, throw a 404 error
