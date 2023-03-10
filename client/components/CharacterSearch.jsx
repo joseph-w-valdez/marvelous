@@ -14,7 +14,7 @@ const CharacterSearch = ({ onSearch }) => {
 
   const searchHandler = (event) => {
     event.preventDefault();
-    const apiUrl = `/marvel/character/${inputValue}`;
+    const apiUrl = `https://marvelous.onrender.com/marvel/character/${inputValue}`;
     axios.get(apiUrl)
       .then((response) => {
         onSearch(response.data);
