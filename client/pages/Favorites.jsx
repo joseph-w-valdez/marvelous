@@ -14,10 +14,13 @@ const Favorites = ({ onMount }) => {
 
   onMount(); // changes the subnavbar text
 
+  console.log('THIS IS A USER', user);
+
   useEffect(() => {
     if (user && user.username) {
       const fetchFavorites = async () => {
         const apiUrl = '/marvel/getFavorites';
+        console.log('FETCH FAVORITES FRONT-END', user);
         try {
           setLoading(true);
           const response = await axiosPost(apiUrl, { favorites: user.favorites });

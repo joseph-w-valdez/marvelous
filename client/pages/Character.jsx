@@ -60,6 +60,7 @@ const Character = ({ selectedCharacter }) => {
         user,
         action: isFavorited ? 'unfavorite' : 'favorite'
       });
+      console.log('FAVES', user);
       if (!isFavorited) {
         const updatedFavorites = [...user.favorites ?? [], response.data.id];
         setUser((prevState) => ({ ...prevState, favorites: updatedFavorites }));

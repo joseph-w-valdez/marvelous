@@ -304,6 +304,7 @@ app.post('/marvel/toggleFavorites', async (req, res, next) => {
 
 app.post('/marvel/getfavorites', authorizationMiddleware, async (req, res, next) => {
   try {
+    console.log('GET CHARACTER SERVER REQ', req.body);
     const { favorites } = req.body;
     if (!favorites || !Array.isArray(favorites)) {
       throw new ClientError(400, 'favorites must be an array');
