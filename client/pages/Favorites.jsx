@@ -35,7 +35,7 @@ const Favorites = ({ onMount }) => {
       fetchFavorites();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [navigate, user]);
 
   if (!user || !user.username) {
     return (
