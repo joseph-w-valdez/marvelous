@@ -25,8 +25,6 @@ const app = express();
 app.use(staticMiddleware);
 app.use(express.json());
 
-console.log('pub key', process.env.API_PUBLIC_KEY, 'priv key', process.env.API_PRIVATE_KEY);
-
 app.get('/marvel/character/:characterName', async (req, res, next) => {
   try {
     console.log('process in GET', process.env.API_PUBLIC_KEY);
