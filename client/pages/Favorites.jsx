@@ -7,9 +7,8 @@ import { ScrollToTopOnPageChange } from '../utils/ScrollToTop';
 
 const Favorites = ({ onMount }) => {
   ScrollToTopOnPageChange();
-  const { user } = useUser();
+  const { user, loading, setLoading } = useUser();
   const [characters, setCharacters] = useState([]);
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   onMount(); // changes the subnavbar text
@@ -22,7 +21,6 @@ const Favorites = ({ onMount }) => {
           setLoading(true);
           const response = await axiosPost(apiUrl, { favorites: user.favorites });
           setCharacters(response.data);
-          console.log('res', response.data, 'chars', characters);
         } catch (error) {
           console.error(error);
         } finally {

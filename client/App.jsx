@@ -12,7 +12,7 @@ import TermsOfService from './pages/Terms';
 import PrivacyPolicy from './pages/Policy';
 import konamiCodeListener from './utils/EasterEgg';
 
-import { UserProvider } from './contexts/UserContext';
+import { UserProvider, useUser } from './contexts/UserContext';
 
 function App() {
   const [characterData, setCharacterData] = useState(undefined);
