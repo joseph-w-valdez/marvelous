@@ -23,7 +23,7 @@ const SignIn = ({ onMount }) => {
     console.log('FETCH FAVORITES FRONT-END', user);
     try {
       setLoading(true);
-      if (user.favorites.length === 0) {
+      if (!user.favorites) {
         console.log('no faves rn');
         const response = await axiosPost(apiUrl, { favorites: [] });
         setUser((prevUser) => ({ ...prevUser, favorites: response.data }));
