@@ -10,6 +10,8 @@ const SignIn = ({ onMount }) => {
   const [usernameInputValue, setUsernameInputValue] = useState('');
   const [passwordInputValue, setPasswordInputValue] = useState('');
   const [successMessage, setSuccessMessage] = useState(undefined);
+  const [loading, setLoading] = useState(false);
+
   onMount();
   ScrollToTopOnPageChange();
 
@@ -28,6 +30,27 @@ const SignIn = ({ onMount }) => {
         setUser({ username: data.username, pictureUrl: res.data.profilePictureUrl, favorites: res.data.favoritesList });
         setAuthToken(res.data.token);
         setSuccessMessage('Signed-in successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
+        const fetchFavorites = async () => {
+          const apiUrl = '/marvel/getFavorites';
+          console.log('FETCH FAVORITES FRONT-END', user);
+          try {
+            setLoading(true);
+            if (!user.favorites) {
+              const response = await axiosPost(apiUrl, { favorites: [] });
+              setCharacters(response.data);
+              console.log('res', response.data, 'chars', characters);
+            } else {
+              const response = await axiosPost(apiUrl, { favorites: user.favorites });
+              setCharacters(response.data);
+              console.log('res', response.data, 'chars', characters);
+            }
+          } catch (error) {
+            console.error(error);
+          } finally {
+            setLoading(false);
+          }
+        };
+        fetchFavorites();
       })
       .catch((err) => console.error(err));
   };
