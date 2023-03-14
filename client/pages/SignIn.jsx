@@ -14,7 +14,7 @@ const SignIn = ({ onMount }) => {
   ScrollToTopOnPageChange();
 
   const navigate = useNavigate();
-  const { setUser, loading, setLoading } = useUser();
+  const { setUser, setLoading } = useUser();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
@@ -55,7 +55,6 @@ const SignIn = ({ onMount }) => {
       const apiUrl = 'http://localhost:3000/marvel/demo';
       setLoading(true);
       const res = await axiosPost(apiUrl);
-      console.log(res);
       setUser({
         username: res.data.username,
         pictureUrl: res.data.profilePictureUrl,

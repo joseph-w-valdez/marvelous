@@ -31,7 +31,12 @@ function App() {
       <div className="mt-14">
         <SubNavbar text={subNavbarText} />
         <div className="body-content" style={{ paddingTop: '100px' }}>
-          {loading && <BeatLoader color="#B13434" className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />}
+          {loading && (
+            <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center" >
+              <div className='text-[#FFF] text-4xl font-bold text-shadow'>Loading &nbsp;</div>
+              <BeatLoader color="#FFF" size="15" className='relative top-2'/>
+            </div>
+          )}
           <div className="routes-container" style={{ marginTop: '-60px' }}>
             <Routes>
               <Route path="/" element={<Home onSearch={setCharacterData} onMount={() => setSubNavBarText('SEARCH')} />} />
