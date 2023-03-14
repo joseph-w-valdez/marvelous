@@ -11,14 +11,31 @@ const SignIn = ({ onMount }) => {
   const [passwordInputValue, setPasswordInputValue] = useState('');
   const [successMessage, setSuccessMessage] = useState(undefined);
   const [loading, setLoading] = useState(false);
-  const [characters, setCharacters] = useState([]);
-  const { user } = useUser();
+  const { user, setUser } = useUser();
 
   onMount();
   ScrollToTopOnPageChange();
 
   const navigate = useNavigate();
-  const { setUser } = useUser();
+
+  const fetchFavorites = async () => {
+    const apiUrl = '/marvel/getFavorites';
+    console.log('FETCH FAVORITES FRONT-END', user);
+    try {
+      setLoading(true);
+      if (!user.favorites) {
+        const response = await axiosPost(apiUrl, { favorites: [] });
+        setUser((prevUser) => ({ ...prevUser, favorites: response.data }));
+      } else {
+        const response = await axiosPost(apiUrl, { favorites: user.favorites });
+        setUser((prevUser) => ({ ...prevUser, favorites: response.data }));
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSignIn = (e) => {
     e.preventDefault();
@@ -32,26 +49,6 @@ const SignIn = ({ onMount }) => {
         setUser({ username: data.username, pictureUrl: res.data.profilePictureUrl, favorites: res.data.favoritesList });
         setAuthToken(res.data.token);
         setSuccessMessage('Signed-in successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
-        const fetchFavorites = async () => {
-          const apiUrl = '/marvel/getFavorites';
-          console.log('FETCH FAVORITES FRONT-END', user);
-          try {
-            setLoading(true);
-            if (!user.favorites) {
-              const response = await axiosPost(apiUrl, { favorites: [] });
-              setCharacters(response.data);
-              console.log('res', response.data, 'chars', characters);
-            } else {
-              const response = await axiosPost(apiUrl, { favorites: user.favorites });
-              setCharacters(response.data);
-              console.log('res', response.data, 'chars', characters);
-            }
-          } catch (error) {
-            console.error(error);
-          } finally {
-            setLoading(false);
-          }
-        };
         fetchFavorites();
       })
       .catch((err) => console.error(err));
@@ -75,6 +72,7 @@ const SignIn = ({ onMount }) => {
         setUser({ username: res.data.username, pictureUrl: res.data.profilePictureUrl });
         setAuthToken(res.data.token);
         setSuccessMessage('Signed-in successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
+        fetchFavorites();
       })
       .catch((err) => console.error(err));
   };
