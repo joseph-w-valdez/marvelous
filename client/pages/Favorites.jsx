@@ -23,9 +23,15 @@ const Favorites = ({ onMount }) => {
         console.log('FETCH FAVORITES FRONT-END', user);
         try {
           setLoading(true);
-          const response = await axiosPost(apiUrl, { favorites: user.favorites });
-          setCharacters(response.data);
-          console.log('res', response.data, 'chars', characters);
+          if (!user.favorites) {
+            const response = await axiosPost(apiUrl, { favorites: [] });
+            setCharacters(response.data);
+            console.log('res', response.data, 'chars', characters);
+          } else {
+            const response = await axiosPost(apiUrl, { favorites: user.favorites });
+            setCharacters(response.data);
+            console.log('res', response.data, 'chars', characters);
+          }
         } catch (error) {
           console.error(error);
         } finally {
