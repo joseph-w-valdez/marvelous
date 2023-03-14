@@ -20,7 +20,7 @@ const SignIn = ({ onMount }) => {
 
   const handleSignIn = (e) => {
     e.preventDefault();
-    const apiUrl = 'http://localhost:3000/marvel/sign-in';
+    const apiUrl = '/marvel/sign-in';
     const data = {
       username: usernameInputValue,
       password: passwordInputValue
@@ -45,7 +45,7 @@ const SignIn = ({ onMount }) => {
   }, [successMessage, navigate]);
 
   const handleDemo = () => {
-    const apiUrl = 'http://localhost:3000/marvel/demo';
+    const apiUrl = '/marvel/demo';
     axiosPost(apiUrl)
       .then((res) => {
         console.log(res);

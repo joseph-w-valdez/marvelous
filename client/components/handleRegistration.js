@@ -1,17 +1,17 @@
 const axios = require('axios');
 
 const handleRegistration = async (data, setErrorMessage) => {
-  const apiUrl = 'http://localhost:3000/marvel/registration';
+  const apiUrl = '/marvel/registration';
   let profilePictureUrl = null;
 
   if (data.file) {
     const formData = new FormData();
     formData.append('image', data.file);
-    const uploadUrl = 'http://localhost:3000/marvel/upload';
+    const uploadUrl = '/marvel/upload';
 
     try {
       const response = await axios.post(uploadUrl, formData);
-      profilePictureUrl = `http://localhost:3000/images/${response.data}`;
+      profilePictureUrl = `/images/${response.data}`;
     } catch (error) {
       console.error(error);
     }
