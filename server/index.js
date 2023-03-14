@@ -309,16 +309,17 @@ app.post('/marvel/getfavorites', authorizationMiddleware, async (req, res, next)
     if (!favorites || !Array.isArray(favorites)) {
       throw new ClientError(400, 'favorites must be an array');
     }
-    if (favorites.length === 0) {
+    /*  if (favorites.length === 0) {
       // If the favorites array is empty, return an empty response
       res.status(200).json([]);
       return;
-    }
+    } */
     // query the characters table for all characters with matching id values from the req
     const { rows } = await db.query(
       'SELECT * FROM characters WHERE id = ANY($1::int[])',
       [favorites]
     );
+    console.log('rows', rows);
     res.status(200).json(rows);
   } catch (error) {
     console.error(error);
