@@ -16,7 +16,7 @@ const Favorites = ({ onMount }) => {
 
   console.log('THIS IS A USER', user);
 
-/*   useEffect(() => {
+  /*   useEffect(() => {
     if (user && user.username) {
       const fetchFavorites = async () => {
         const apiUrl = '/marvel/getFavorites';
@@ -39,9 +39,9 @@ const Favorites = ({ onMount }) => {
         }
       };
       fetchFavorites();
-    } */
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigate, user]);
+  }, [navigate, user]); */
 
   if (!user || !user.username) {
     return (
