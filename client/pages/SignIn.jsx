@@ -24,9 +24,11 @@ const SignIn = ({ onMount }) => {
     try {
       setLoading(true);
       if (!user.favorites) {
+        console.log('no faves rn');
         const response = await axiosPost(apiUrl, { favorites: [] });
         setUser((prevUser) => ({ ...prevUser, favorites: response.data }));
       } else {
+        console.log('there are faves');
         const response = await axiosPost(apiUrl, { favorites: user.favorites });
         setUser((prevUser) => ({ ...prevUser, favorites: response.data }));
       }
