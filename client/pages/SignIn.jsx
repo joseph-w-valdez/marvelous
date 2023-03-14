@@ -11,6 +11,8 @@ const SignIn = ({ onMount }) => {
   const [passwordInputValue, setPasswordInputValue] = useState('');
   const [successMessage, setSuccessMessage] = useState(undefined);
   const [loading, setLoading] = useState(false);
+  const [characters, setCharacters] = useState([]);
+  const { user } = useUser();
 
   onMount();
   ScrollToTopOnPageChange();
