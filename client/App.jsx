@@ -17,6 +17,7 @@ import { useUser } from './contexts/UserContext';
 function App() {
   const [characterData, setCharacterData] = useState(undefined);
   const [subNavbarText, setSubNavBarText] = useState('SEARCH');
+  const { loading } = useUser();
 
   useEffect(() => {
     const cleanup = konamiCodeListener();
@@ -29,6 +30,16 @@ function App() {
       <div className="mt-14">
         <SubNavbar text={subNavbarText} />
         <div className="body-content" style={{ paddingTop: '100px' }}>
+          {loading
+            ? (
+              <div
+              className="text-white text-4xl fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+              style={{ zIndex: 9999 }}
+            >
+                Loading...
+              </div>
+              )
+            : null}
           <div className="routes-container" style={{ marginTop: '-60px' }}>
             <Routes>
               <Route path="/" element={<Home onSearch={setCharacterData} onMount={() => setSubNavBarText('SEARCH')} />} />
