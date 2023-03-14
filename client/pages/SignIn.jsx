@@ -14,7 +14,9 @@ const SignIn = ({ onMount }) => {
   ScrollToTopOnPageChange();
 
   const navigate = useNavigate();
-  const { setUser } = useUser();
+  const { user, setUser } = useUser();
+  const [characters, setCharacters] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const handleSignIn = (e) => {
     e.preventDefault();
@@ -47,7 +49,7 @@ const SignIn = ({ onMount }) => {
     axiosPost(apiUrl)
       .then((res) => {
         console.log(res);
-        setUser({ username: res.data.username, pictureUrl: res.data.profilePictureUrl });
+        setUser({ username: res.data.username, pictureUrl: res.data.profilePictureUrl, favorites: res.data.favoritesList });
         setAuthToken(res.data.token);
         setSuccessMessage('Signed-in successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
       })
