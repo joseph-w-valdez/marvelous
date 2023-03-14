@@ -11,6 +11,7 @@ import Favorites from './pages/Favorites';
 import TermsOfService from './pages/Terms';
 import PrivacyPolicy from './pages/Policy';
 import konamiCodeListener from './utils/EasterEgg';
+import { BeatLoader } from 'react-spinners';
 
 import { useUser } from './contexts/UserContext';
 
@@ -30,16 +31,7 @@ function App() {
       <div className="mt-14">
         <SubNavbar text={subNavbarText} />
         <div className="body-content" style={{ paddingTop: '100px' }}>
-          {loading
-            ? (
-              <div
-              className="text-white text-4xl fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-              style={{ zIndex: 9999 }}
-            >
-                Loading...
-              </div>
-              )
-            : null}
+          {loading && <BeatLoader color="#B13434" className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />}
           <div className="routes-container" style={{ marginTop: '-60px' }}>
             <Routes>
               <Route path="/" element={<Home onSearch={setCharacterData} onMount={() => setSubNavBarText('SEARCH')} />} />
