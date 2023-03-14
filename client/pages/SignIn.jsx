@@ -81,49 +81,53 @@ const SignIn = ({ onMount }) => {
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
       <h1 className='text-4xl text-center mb-2'>SIGN IN</h1>
       <div className='basis-full' />
-      {successMessage
+      {loading
         ? (
-          <h1 className='text-blue-300 bold'>
-            {successMessage}
-            <span
-            className='text-blue-500 underline cursor-pointer'
-            onClick={() => navigate('/')}
-          >
-              here
-            </span>
-          </h1>
+          <h1 className='text-blue-300 bold'>Loading...</h1>
           )
-        : (
-          <>
-            <form className='text-center text-black' onSubmit={handleSignIn}>
-              <input
-              type="text"
+        : successMessage
+          ? (
+            <h1 className='text-blue-300 bold'>
+              {successMessage}
+              <span className='text-blue-500 underline cursor-pointer' onClick={() => navigate('/')}>
+                here
+              </span>
+            </h1>
+            )
+          : (
+            <>
+              <form className='text-center text-black' onSubmit={handleSignIn}>
+                <input
+              type='text'
               placeholder='Username'
               className='w-72 h-9 rounded px-3 mt-3'
               value={usernameInputValue}
               onChange={(e) => setUsernameInputValue(e.target.value)}
               required
             />
-              <div className='basis-full' />
-              <input
-              type="password"
+                <div className='basis-full' />
+                <input
+              type='password'
               placeholder='Password'
               className='w-72 h-9 rounded px-3 mt-3'
               value={passwordInputValue}
               onChange={(e) => setPasswordInputValue(e.target.value)}
               required
             />
+                <div className='basis-full' />
+                <Button text='SIGN IN' type='submit' />
+              </form>
               <div className='basis-full' />
-              <Button text='SIGN IN' type="submit" />
-            </form>
-            <div className='basis-full' />
-            <Link to='/register'><p className='text-blue-500 underline text-sm'>Don&apos;t have an account? click here!</p></Link>
-            <div className='basis-full' />
-            <Button text='DEMO BUTTON' type="button" onClick={handleDemo} />
-          </>
-          )}
+              <Link to='/register'>
+                <p className='text-blue-500 underline text-sm'>Don&apos;t have an account? click here!</p>
+              </Link>
+              <div className='basis-full' />
+              <Button text='DEMO BUTTON' type='button' onClick={handleDemo} />
+            </>
+            )}
     </div>
   );
+
 };
 
 export default SignIn;
