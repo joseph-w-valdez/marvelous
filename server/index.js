@@ -304,9 +304,9 @@ app.post('/marvel/getFavorites', authorizationMiddleware, async (req, res, next)
   try {
     console.log('GET CHARACTER SERVER REQ', req.body);
     const { favorites } = req.body;
-    if (!favorites || !Array.isArray(favorites)) {
+    /* if (!favorites || !Array.isArray(favorites)) {
       throw new ClientError(400, 'favorites must be an array');
-    }
+    } */
     /*  if (favorites.length === 0) {
       // If the favorites array is empty, return an empty response
       res.status(200).json([]);
