@@ -35,7 +35,7 @@ const ProfileMenu = ({ profileMenu }) => {
         <div>
           <div className='pl-2'>{user.username}</div>
           <div className="w-full h-[2px] bg-[#b0bec5] mt-1 mb-2" />
-          <div className='pl-2' onClick={handleFavorites}><p>My Favorites</p></div>
+          <div className='pl-2' onClick={handleFavorites}><p>Favorites</p></div>
           <div className='pl-2' onClick={handleSignOut}><p>Sign Out</p></div>
         </div>)
       }

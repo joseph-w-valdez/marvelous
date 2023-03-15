@@ -34,12 +34,10 @@ const HamburgerMenu = ({ hamburgerMenu }) => {
     w-48 h-auto rounded-md absolute left-5 text-white font-Poppins top-9 bg-[#333333]
      pt-1 pb-1 cursor-pointer ${hamburgerMenu ? 'block' : 'hidden'}`
     } >
-      {!user.username && <Link to='/sign-in'><p className='pl-2'>Sign In</p></Link>}
       <div>
-        <div className='pl-2'>{user.username}</div>
-        <div className="w-full h-[2px] bg-[#b0bec5] mt-1 mb-2" />
         <div className='pl-2' onClick={handleSearch}><p>Character Search</p></div>
-        <div className='pl-2' onClick={handleFavorites}><p>My Favorites</p></div>
+        <div className='pl-2' onClick={handleFavorites}><p>Favorites</p></div>
+        {!user.username && <Link to='/sign-in'><p className='pl-2'>Sign In</p></Link>}
         {user.username && (<div className='pl-2' onClick={handleSignOut}><p>Sign Out</p></div>)}
       </div>
     </div>

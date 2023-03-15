@@ -64,7 +64,7 @@ export default function Navbar() {
     <div className='navbar flex items-center justify-between py-2 px-1 fixed top-0 w-full z-10 bg-[#131313]'>
       <div className='flex items-center'>
         <i
-          className={`text-white fa-solid ${isHamburgerMenuOpen ? 'fa-times' : 'fa-bars'} ml-3 ${isHamburgerMenuOpen ? 'mr-3' : 'mr-2'} transform ${isHamburgerMenuOpen ? '-rotate-90' : 'rotate-0'} transition duration-300`}
+          className={`text-white block sm:invisible fa-solid ${isHamburgerMenuOpen ? 'fa-times' : 'fa-bars'} ml-3 ${isHamburgerMenuOpen ? 'mr-3' : 'mr-2'} transform ${isHamburgerMenuOpen ? '-rotate-90' : 'rotate-0'} transition duration-300`}
           onClick={handleHamburgerClick}
           ref={hamburgerMenuRef}
         />
