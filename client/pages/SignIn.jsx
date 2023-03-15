@@ -10,6 +10,8 @@ const SignIn = ({ onMount }) => {
   const [usernameInputValue, setUsernameInputValue] = useState('');
   const [passwordInputValue, setPasswordInputValue] = useState('');
   const [successMessage, setSuccessMessage] = useState(undefined);
+  const [error, setError] = useState(null);
+
   onMount();
   ScrollToTopOnPageChange();
 
@@ -33,8 +35,10 @@ const SignIn = ({ onMount }) => {
       });
       setAuthToken(res.data.token);
       setSuccessMessage('Signed-in successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
+      setError(null);
     } catch (err) {
       console.error(err);
+      setError(err.response.data.error);
     } finally {
       setLoading(false);
     }
@@ -73,6 +77,11 @@ const SignIn = ({ onMount }) => {
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
       <h1 className='text-4xl text-center mb-2'>SIGN IN</h1>
       <div className='basis-full' />
+      {error && (
+      <>
+        <div className='text-red-500 '>{error}</div>
+        <div className='basis-full' />
+      </>)}
       {successMessage
         ? (
           <h1 className='text-blue-300 bold'>
