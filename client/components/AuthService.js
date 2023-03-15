@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const apiUrl = 'http://localhost:3000/marvel';
+const apiUrl = '/marvel';
 
 export const signIn = async (username, password) => {
   try {

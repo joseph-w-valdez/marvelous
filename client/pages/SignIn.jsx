@@ -20,7 +20,7 @@ const SignIn = ({ onMount }) => {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-    const apiUrl = 'http://localhost:3000/marvel/sign-in';
+    const apiUrl = '/marvel/sign-in';
     const data = {
       username: usernameInputValue,
       password: passwordInputValue

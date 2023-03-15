@@ -33,7 +33,7 @@ const Character = ({ selectedCharacter }) => {
   // Fetch the user's favorites for the selected character on mount
   useEffect(() => {
     const fetchFavorites = async () => {
-      const apiUrl = 'http://localhost:3000/marvel/toggleFavorites';
+      const apiUrl = '/marvel/toggleFavorites';
       try {
         setLoading(true);
         const response = await axiosPost(apiUrl, {
@@ -56,7 +56,7 @@ const Character = ({ selectedCharacter }) => {
 
   // Toggle the user's favorite status for the selected character
   const handleFavorites = useCallback(async () => {
-    const apiUrl = 'http://localhost:3000/marvel/toggleFavorites';
+    const apiUrl = '/marvel/toggleFavorites';
     try {
       setLoading(true);
       const response = await axiosPost(apiUrl, {

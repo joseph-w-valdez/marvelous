@@ -16,7 +16,7 @@ const Favorites = ({ onMount }) => {
   useEffect(() => {
     if (user && user.username) {
       const fetchFavorites = async () => {
-        const apiUrl = 'http://localhost:3000/marvel/getFavorites';
+        const apiUrl = '/marvel/getFavorites';
         try {
           setLoading(true);
           const response = await axiosPost(apiUrl, { favorites: user.favorites });
