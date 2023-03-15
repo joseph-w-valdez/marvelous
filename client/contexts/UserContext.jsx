@@ -12,12 +12,13 @@ const useUser = () => {
 
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState({ username: null, pictureUrl: null, favorites: [] });
+  const [loading, setLoading] = useState(false);
 
   const reset = () => {
     setUser({ username: null, pictureUrl: null, favorites: [] });
   };
 
-  const value = { user, setUser, reset };
+  const value = { user, setUser, reset, loading, setLoading };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

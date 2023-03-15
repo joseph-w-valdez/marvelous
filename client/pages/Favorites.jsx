@@ -7,9 +7,8 @@ import { ScrollToTopOnPageChange } from '../utils/ScrollToTop';
 
 const Favorites = ({ onMount }) => {
   ScrollToTopOnPageChange();
-  const { user } = useUser();
+  const { user, setLoading } = useUser();
   const [characters, setCharacters] = useState([]);
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   onMount(); // changes the subnavbar text
@@ -22,7 +21,6 @@ const Favorites = ({ onMount }) => {
           setLoading(true);
           const response = await axiosPost(apiUrl, { favorites: user.favorites });
           setCharacters(response.data);
-          console.log('res', response.data, 'chars', characters);
         } catch (error) {
           console.error(error);
         } finally {
@@ -46,12 +44,8 @@ const Favorites = ({ onMount }) => {
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
       <h1 className='text-2xl sm:text-4xl mb-4 w-full text-center'>Favorite Characters:</h1>
       {/* show the loading screen while waiting to retrieve favorites data */}
-      {loading
-        ? (
-          <div className="w-full text-center text-2xl">Loading...</div>
-          )
-          /* if there are no favorites show a relevant message with a link to the search page */
-        : characters.length === 0
+      {/* if there are no favorites show a relevant message with a link to the search page */
+        characters.length === 0
           ? (
             <div className="w-full  text-center text-lg">
               No favorites found! Click <Link to='/' className='text-blue-500 underline'>here</Link> to search for characters to add!

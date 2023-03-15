@@ -8,8 +8,10 @@ import FileInput from '../components/FileInput';
 import handleRegistration from '../components/handleRegistration';
 import { usernameValidation, emailValidation, passwordValidation } from '../components/validation';
 import { ScrollToTopOnPageChange } from '../utils/ScrollToTop';
+import { useUser } from '../contexts/UserContext';
 
 const Register = ({ onMount }) => {
+  const { setLoading } = useUser();
   const [errorMessage, setErrorMessage] = useState(undefined);
   const [successMessage, setSuccessMessage] = useState(undefined);
   const { control, register, handleSubmit, watch, formState: { errors } } = useForm();
@@ -20,10 +22,13 @@ const Register = ({ onMount }) => {
 
   const onSubmit = async (data) => {
     try {
+      setLoading(true);
       await handleRegistration(data, setErrorMessage);
       setSuccessMessage('Account created successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
     } catch (error) {
       setErrorMessage(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 

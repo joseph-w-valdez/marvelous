@@ -10,28 +10,38 @@ const SignIn = ({ onMount }) => {
   const [usernameInputValue, setUsernameInputValue] = useState('');
   const [passwordInputValue, setPasswordInputValue] = useState('');
   const [successMessage, setSuccessMessage] = useState(undefined);
+  const [error, setError] = useState(null);
+
   onMount();
   ScrollToTopOnPageChange();
 
   const navigate = useNavigate();
-  const { user, setUser } = useUser();
-  const [characters, setCharacters] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const { setUser, setLoading } = useUser();
 
-  const handleSignIn = (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
     const apiUrl = '/marvel/sign-in';
     const data = {
       username: usernameInputValue,
       password: passwordInputValue
     };
-    axiosPost(apiUrl, data)
-      .then((res) => {
-        setUser({ username: data.username, pictureUrl: res.data.profilePictureUrl, favorites: res.data.favoritesList });
-        setAuthToken(res.data.token);
-        setSuccessMessage('Signed-in successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
-      })
-      .catch((err) => console.error(err));
+    try {
+      setLoading(true);
+      const res = await axiosPost(apiUrl, data);
+      setUser({
+        username: data.username,
+        pictureUrl: res.data.profilePictureUrl,
+        favorites: res.data.favoritesList
+      });
+      setAuthToken(res.data.token);
+      setSuccessMessage('Signed-in successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
+      setError(null);
+    } catch (err) {
+      console.error(err);
+      setError(err.response.data.error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -44,22 +54,34 @@ const SignIn = ({ onMount }) => {
     return () => clearTimeout(timeout);
   }, [successMessage, navigate]);
 
-  const handleDemo = () => {
-    const apiUrl = '/marvel/demo';
-    axiosPost(apiUrl)
-      .then((res) => {
-        console.log(res);
-        setUser({ username: res.data.username, pictureUrl: res.data.profilePictureUrl, favorites: res.data.favoritesList });
-        setAuthToken(res.data.token);
-        setSuccessMessage('Signed-in successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
-      })
-      .catch((err) => console.error(err));
+  const handleDemo = async () => {
+    try {
+      const apiUrl = 'http://localhost:3000/marvel/demo';
+      setLoading(true);
+      const res = await axiosPost(apiUrl);
+      setUser({
+        username: res.data.username,
+        pictureUrl: res.data.profilePictureUrl,
+        favorites: res.data.favoritesList
+      });
+      setAuthToken(res.data.token);
+      setSuccessMessage('Signed-in successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
       <h1 className='text-4xl text-center mb-2'>SIGN IN</h1>
       <div className='basis-full' />
+      {error && (
+      <>
+        <div className='text-red-500 '>{error}</div>
+        <div className='basis-full' />
+      </>)}
       {successMessage
         ? (
           <h1 className='text-blue-300 bold'>
@@ -76,7 +98,7 @@ const SignIn = ({ onMount }) => {
           <>
             <form className='text-center text-black' onSubmit={handleSignIn}>
               <input
-              type="text"
+              type='text'
               placeholder='Username'
               className='w-72 h-9 rounded px-3 mt-3'
               value={usernameInputValue}
@@ -85,7 +107,7 @@ const SignIn = ({ onMount }) => {
             />
               <div className='basis-full' />
               <input
-              type="password"
+              type='password'
               placeholder='Password'
               className='w-72 h-9 rounded px-3 mt-3'
               value={passwordInputValue}
@@ -93,12 +115,16 @@ const SignIn = ({ onMount }) => {
               required
             />
               <div className='basis-full' />
-              <Button text='SIGN IN' type="submit" />
+              <Button text='SIGN IN' type='submit' />
             </form>
             <div className='basis-full' />
-            <Link to='/register'><p className='text-blue-500 underline text-sm'>Don&apos;t have an account? click here!</p></Link>
+            <Link to='/register'>
+              <p className='text-blue-500 underline text-sm'>
+                Don&apos;t have an account? click here!
+              </p>
+            </Link>
             <div className='basis-full' />
-            <Button text='DEMO BUTTON' type="button" onClick={handleDemo} />
+            <Button text='DEMO BUTTON' type='button' onClick={handleDemo} />
           </>
           )}
     </div>

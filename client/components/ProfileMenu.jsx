@@ -5,7 +5,7 @@ import axiosPost from '../utils/AxiosPost';
 
 const ProfileMenu = ({ profileMenu }) => {
   const navigate = useNavigate();
-  const { user, setUser } = useUser();
+  const { user, setUser, setLoading } = useUser();
 
   const handleFavorites = async () => {
     navigate('/favorites');
@@ -13,12 +13,15 @@ const ProfileMenu = ({ profileMenu }) => {
 
   const handleSignOut = async () => {
     try {
-      await axiosPost('/marvel/sign-out', null);
+      setLoading(true);
+      await axiosPost('http://localhost:3000/marvel/sign-out', null);
       localStorage.removeItem('authToken'); // remove authentication token from local storage
       setUser({ username: null, pictureUrl: null });
       navigate('/sign-in');
     } catch (error) {
       console.error('FAILED SIGN OUT', error);
+    } finally {
+      setLoading(false);
     }
   };
 

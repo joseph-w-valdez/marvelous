@@ -3,6 +3,7 @@ import Button from './Button';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ScrollToTopOnPageChange } from '../utils/ScrollToTop';
+import { useUser } from '../contexts/UserContext';
 
 const buttonText = 'SEARCH';
 
@@ -11,25 +12,28 @@ const CharacterSearch = ({ onSearch }) => {
   const [inputValue, setInputValue] = useState('');
   const [errorMessage, setErrorMessage] = useState(undefined);
   const navigate = useNavigate();
+  const { setLoading } = useUser();
 
-  const searchHandler = (event) => {
+  const searchHandler = async (event) => {
     event.preventDefault();
-    const apiUrl = `/marvel/character/${inputValue}`;
-    axios.get(apiUrl)
-      .then((response) => {
-        onSearch(response.data);
-        setErrorMessage(undefined);
-        navigate('/character');
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 404) {
-          console.error(error);
-          setErrorMessage(`Could not find character with name '${inputValue}'`);
-        } else {
-          console.error(console.error);
-          setErrorMessage('An error occurred while fetching data. Please try again later.');
-        }
-      });
+    const apiUrl = `http://localhost:3000/marvel/character/${inputValue}`;
+    try {
+      setLoading(true);
+      const response = await axios.get(apiUrl);
+      onSearch(response.data);
+      setErrorMessage(undefined);
+      navigate('/character');
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        console.error(error);
+        setErrorMessage(`Could not find character with name '${inputValue}'`);
+      } else {
+        console.error(error);
+        setErrorMessage('An error occurred while fetching data. Please try again later.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

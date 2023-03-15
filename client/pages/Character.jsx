@@ -5,7 +5,7 @@ import { useLocation, Link } from 'react-router-dom';
 import { ScrollToTopOnPageChange } from '../utils/ScrollToTop';
 
 const Character = ({ selectedCharacter }) => {
-  const { user, setUser } = useUser();
+  const { user, setUser, setLoading } = useUser();
   const location = useLocation();
 
   // Scroll to the top of the page on mount and when the location changes
@@ -35,6 +35,7 @@ const Character = ({ selectedCharacter }) => {
     const fetchFavorites = async () => {
       const apiUrl = '/marvel/toggleFavorites';
       try {
+        setLoading(true);
         const response = await axiosPost(apiUrl, {
           selectedCharacter,
           user,
@@ -46,6 +47,8 @@ const Character = ({ selectedCharacter }) => {
         setIsFavorited(isCharacterFavorited);
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchFavorites();
@@ -55,6 +58,7 @@ const Character = ({ selectedCharacter }) => {
   const handleFavorites = useCallback(async () => {
     const apiUrl = '/marvel/toggleFavorites';
     try {
+      setLoading(true);
       const response = await axiosPost(apiUrl, {
         selectedCharacter,
         user,
@@ -70,6 +74,8 @@ const Character = ({ selectedCharacter }) => {
       setIsFavorited(!isFavorited);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   }, [isFavorited, selectedCharacter, setUser, user]);
 
