@@ -79,7 +79,7 @@ const SignIn = ({ onMount }) => {
       <div className='basis-full' />
       {error && (
       <>
-        <div className='text-red-500 '>{error}</div>
+        <div className='text-red-500'>{error}</div>
         <div className='basis-full' />
       </>)}
       {successMessage
