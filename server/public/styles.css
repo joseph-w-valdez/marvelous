@@ -1006,6 +1006,10 @@ video {
 }
 
 @media (min-width: 640px) {
+  .sm\:invisible {
+    visibility: hidden;
+  }
+
   .sm\:block {
     display: block;
   }
@@ -1036,6 +1040,10 @@ video {
 
   .md\:block {
     display: block;
+  }
+
+  .md\:hidden {
+    display: none;
   }
 }
 

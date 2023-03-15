@@ -18,7 +18,7 @@ const HamburgerMenu = ({ hamburgerMenu }) => {
   const handleSignOut = async () => {
     try {
       setLoading(true);
-      await axiosPost('http://localhost:3000/marvel/sign-out', null);
+      await axiosPost('/marvel/sign-out', null);
       localStorage.removeItem('authToken'); // remove authentication token from local storage
       setUser({ username: null, pictureUrl: null });
       navigate('/sign-in');

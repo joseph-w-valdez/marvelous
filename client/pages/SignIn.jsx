@@ -56,7 +56,7 @@ const SignIn = ({ onMount }) => {
 
   const handleDemo = async () => {
     try {
-      const apiUrl = 'http://localhost:3000/marvel/demo';
+      const apiUrl = '/marvel/demo';
       setLoading(true);
       const res = await axiosPost(apiUrl);
       setUser({

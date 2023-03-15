@@ -20,7 +20,7 @@
   "email": "asd@asd.com                                                 ",
   "id": 3,
   "passwordHash": "$argon2id$v=19$m=4096,t=3,p=1$2//7a2ZcOrOA1UsBaVQo6w$EPjliLEiO5ih8PgYjnlSvRIT/5+vqYYpoKDgVKTQKjI",
-  "profilePictureUrl": "http://localhost:3000/images/image-1677882956940.png",
+  "profilePictureUrl": "/images/image-1677882956940.png",
   "username": "didyouknow"
  }
 ]
