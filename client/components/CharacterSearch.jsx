@@ -16,7 +16,7 @@ const CharacterSearch = ({ onSearch }) => {
 
   const searchHandler = async (event) => {
     event.preventDefault();
-    const apiUrl = `http://localhost:3000/marvel/character/${inputValue}`;
+    const apiUrl = `localhost:3000/marvel/character/${inputValue}`;
     try {
       setLoading(true);
       const response = await axios.get(apiUrl);
