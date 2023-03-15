@@ -34,7 +34,7 @@ function App() {
           {loading && (
             <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center" >
               <div className='text-[#FFF] text-4xl font-bold text-shadow'>Loading &nbsp;</div>
-              <BeatLoader color="#FFF" size="15" className='relative top-2'/>
+              <BeatLoader color="#FFF" size="15"/>
             </div>
           )}
           <div className="routes-container" style={{ marginTop: '-60px' }}>
