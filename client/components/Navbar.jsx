@@ -2,16 +2,22 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import ProfileMenu from './ProfileMenu';
 import { useUser } from '../contexts/UserContext';
+import HamburgerMenu from './HamburgerMenu';
 
 export default function Navbar() {
   const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [isHamburgerMenuOpen, setIsHamburgerMenuOpen] = useState(false);
   const profileMenuRef = useRef(null);
+  const hamburgerMenuRef = useRef(null);
   const { user } = useUser();
 
   useEffect(() => {
     const handleClickAnywhere = (event) => {
       if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
         setProfileMenuOpen(false);
+      }
+      if (hamburgerMenuRef.current && !hamburgerMenuRef.current.contains(event.target)) {
+        setIsHamburgerMenuOpen(false);
       }
     };
 
@@ -20,10 +26,14 @@ export default function Navbar() {
     return () => {
       document.removeEventListener('click', handleClickAnywhere);
     };
-  }, [profileMenuRef]);
+  }, [profileMenuRef, hamburgerMenuRef]);
 
   const handleProfileMenuClick = () => {
     setProfileMenuOpen(!isProfileMenuOpen);
+  };
+
+  const handleHamburgerClick = () => {
+    setIsHamburgerMenuOpen(!isHamburgerMenuOpen);
   };
 
   const renderProfileIcon = () => {
@@ -53,7 +63,12 @@ export default function Navbar() {
   return (
     <div className='navbar flex items-center justify-between py-2 px-1 fixed top-0 w-full z-10 bg-[#131313]'>
       <div className='flex items-center'>
-        <i className="text-white fa-solid fa-bars ml-3 mr-2" />
+        <i
+          className={`text-white fa-solid ${isHamburgerMenuOpen ? 'fa-times' : 'fa-bars'} ml-3 ${isHamburgerMenuOpen ? 'mr-3' : 'mr-2'} transform ${isHamburgerMenuOpen ? '-rotate-90' : 'rotate-0'} transition duration-300`}
+          onClick={handleHamburgerClick}
+          ref={hamburgerMenuRef}
+        />
+        <HamburgerMenu hamburgerMenu={isHamburgerMenuOpen}/>
         <Link to='/'>
           <span className='logo bg-[#B13434] text-white font-Impact text-4xl pl-1 pr-1'>
             Marvelous
