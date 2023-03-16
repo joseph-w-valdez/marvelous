@@ -25,11 +25,8 @@ const app = express();
 app.use(staticMiddleware);
 app.use(express.json());
 
-console.log('pub key', process.env.API_PUBLIC_KEY, 'priv key', process.env.API_PRIVATE_KEY);
-
 app.get('/marvel/character/:characterName', async (req, res, next) => {
   try {
-    console.log('process in GET', process.env.API_PUBLIC_KEY);
     // Get the timestamp and hash for the API request
     const timestamp = Date.now().toString();
     const hash = crypto.createHash('md5').update(timestamp + process.env.API_PRIVATE_KEY + process.env.API_PUBLIC_KEY).digest('hex');

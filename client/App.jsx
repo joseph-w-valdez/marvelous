@@ -32,9 +32,9 @@ function App() {
         <SubNavbar text={subNavbarText} />
         <div className="body-content" style={{ paddingTop: '100px' }}>
           {loading && (
-            <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center" >
+            <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-wrap items-center" >
               <div className='text-[#FFF] text-4xl font-bold text-shadow'>Loading &nbsp;</div>
-              <BeatLoader color="#FFF" size="15"/>
+              <BeatLoader color="#FFF" />
             </div>
           )}
           <div className="routes-container" style={{ marginTop: '-60px' }}>
