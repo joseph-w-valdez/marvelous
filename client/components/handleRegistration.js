@@ -27,7 +27,6 @@ const handleRegistration = async (data, setErrorMessage, setSuccessMessage) => {
       const data = error.response;
       if (data.status === 409) {
         setErrorMessage(data.data.error);
-        console.log('handler log', data.data.error);
       } else {
         setErrorMessage('An error occurred while fetching data. Please try again later.');
       }
