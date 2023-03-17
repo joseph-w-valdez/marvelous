@@ -28,6 +28,7 @@ const Register = ({ onMount }) => {
     } catch (error) {
       setErrorMessage(error.message);
     } finally {
+      console.log('this is the error?', errorMessage);
       setLoading(false);
     }
   };

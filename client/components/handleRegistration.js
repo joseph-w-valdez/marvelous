@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const handleRegistration = async (data, errorMessage, setErrorMessage) => {
+const handleRegistration = async (data, setErrorMessage) => {
   const apiUrl = '/marvel/registration';
   let profilePictureUrl = null;
 
@@ -31,8 +31,6 @@ const handleRegistration = async (data, errorMessage, setErrorMessage) => {
     } else {
       setErrorMessage('An error occurred while fetching data. Please try again later.');
     }
-  } finally {
-    console.log('error message here', errorMessage);
   }
 };
 export default handleRegistration;
