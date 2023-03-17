@@ -20,7 +20,7 @@ const Register = ({ onMount }) => {
   ScrollToTopOnPageChange();
   onMount(); // Call the onMount function passed as a prop, which sets the subnavbar text
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data, errorMessage, setErrorMessage) => {
     try {
       setLoading(true);
       await handleRegistration(data, errorMessage, setErrorMessage);

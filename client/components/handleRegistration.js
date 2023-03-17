@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const handleRegistration = async ({ data, errorMessage, setErrorMessage }) => {
+const handleRegistration = async (data, errorMessage, setErrorMessage) => {
   const apiUrl = '/marvel/registration';
   let profilePictureUrl = null;
 
