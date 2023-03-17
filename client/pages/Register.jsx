@@ -24,7 +24,7 @@ const Register = ({ onMount }) => {
     try {
       setLoading(true);
       await handleRegistration(data, setErrorMessage);
-      setSuccessMessage('Account created successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
+      if (!errorMessage) setSuccessMessage('Account created successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
     } catch (error) {
       setErrorMessage(error.message);
     } finally {

@@ -9,7 +9,7 @@ create schema "public";
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   "username" TEXT UNIQUE NOT NULL,
-  email TEXT unique NOT NULL,
+  "email" TEXT unique NOT NULL,
   "passwordHash" TEXT NOT NULL,
   "profilePictureUrl" TEXT,
   "createdAt" timestamptz(6) not null default now()
