@@ -17,7 +17,7 @@ Marvelous is a full-stack web application built with JavaScript, Node.js, and Re
 ### User can search for a specific character to view details about them
 ![UserCanSearch](https://user-images.githubusercontent.com/117682160/226035816-4f1621ad-c28b-4bcf-a2f8-d8d2bfc01f69.gif)
 
-### User can register for and also log into and out of those accounts
+### User can register for and log into and out of accounts
 ![UserAccount](https://user-images.githubusercontent.com/117682160/226069387-7dd7c62d-3e9a-423c-a0d6-23ba8053d501.gif)
 
 ### User can add and remove favorite characters from their account
