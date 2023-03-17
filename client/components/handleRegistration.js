@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const handleRegistration = async (data, setErrorMessage) => {
+const handleRegistration = async (data, setErrorMessage, setSuccessMessage) => {
   const apiUrl = '/marvel/registration';
   let profilePictureUrl = null;
 
@@ -19,6 +19,7 @@ const handleRegistration = async (data, setErrorMessage) => {
 
   try {
     await axios.post(apiUrl, { ...data, profilePictureUrl });
+    setSuccessMessage('Account created successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
   } catch (error) {
     console.error(error);
     if (error.response && error.response.status === 409) {
