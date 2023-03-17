@@ -20,10 +20,10 @@ const Register = ({ onMount }) => {
   ScrollToTopOnPageChange();
   onMount(); // Call the onMount function passed as a prop, which sets the subnavbar text
 
-  const onSubmit = async (data, errorMessage, setErrorMessage) => {
+  const onSubmit = async (data, setErrorMessage) => {
     try {
       setLoading(true);
-      await handleRegistration(data, errorMessage, setErrorMessage);
+      await handleRegistration(data, setErrorMessage);
       setSuccessMessage('Account created successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
     } catch (error) {
       setErrorMessage(error.message);
