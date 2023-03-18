@@ -29,7 +29,7 @@ Marvelous is a full-stack web application built with JavaScript, Node.js, and Re
 3. Introduce a search result page for characters that are similar to the query
 4. Use a search result suggestion in the search bar
 
-### If you'd like to run the Marvelous project on your local machine:
+### If you'd like to run the Marvelous project on your local machine
 
 * System Requirements:
   * Node.js: You will need to have Node.js installed on your computer. The minimum version of Node.js that your application requires is v14.15.1. You can download the latest version of Node.js from the official website: https://nodejs.org/en/download/
