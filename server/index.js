@@ -27,7 +27,6 @@ app.use(express.json());
 
 app.get('/marvel/character/:characterName', async (req, res, next) => {
   try {
-    console.log('process in GET', process.env.API_PUBLIC_KEY);
     // Get the timestamp and hash for the API request
     const timestamp = Date.now().toString();
     const hash = crypto.createHash('md5').update(timestamp + process.env.API_PRIVATE_KEY + process.env.API_PUBLIC_KEY).digest('hex');
@@ -54,7 +53,6 @@ app.get('/marvel/character/:characterName', async (req, res, next) => {
         comicAppearances: characterComicAppearances
       };
     });
-    console.log('characterDataList', characterDataList)
     // Send the character data list as a JSON response
     res.status(200).json(characterDataList);
   } catch (error) {
@@ -63,7 +61,6 @@ app.get('/marvel/character/:characterName', async (req, res, next) => {
     next(error);
   }
 });
-
 
 function getUserByUsername(username) {
   const sql = `
