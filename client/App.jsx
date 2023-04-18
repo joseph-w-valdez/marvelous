@@ -18,7 +18,6 @@ import { useUser } from './contexts/UserContext';
 
 function App() {
   const [characterResults, setCharacterResults] = useState(undefined)
-  const [characterData, setCharacterData] = useState(undefined);
   const [subNavbarText, setSubNavBarText] = useState('SEARCH');
   const { loading } = useUser();
 
@@ -42,7 +41,7 @@ function App() {
           <div className="routes-container" style={{ marginTop: '-60px' }}>
             <Routes>
               <Route path="/" element={<Home onSearch={setCharacterResults} onMount={() => setSubNavBarText('SEARCH')} />} />
-              <Route path="/character" element={<Character selectedCharacter={characterData} onMount={() => setSubNavBarText('CHARACTER')} />} />
+              <Route path="/character" element={<Character onMount={() => setSubNavBarText('CHARACTER')} />} />
               <Route path="/characterSearchResults" element={<CharacterSearchResults characterResults={characterResults} onMount={() => setSubNavBarText('RESULTS')} />} />
               <Route path="/sign-in" element={<SignIn onMount={() => setSubNavBarText('ACCOUNT')} />} />
               <Route path="/register" element={<Register onMount={() => setSubNavBarText('ACCOUNT')} />} />

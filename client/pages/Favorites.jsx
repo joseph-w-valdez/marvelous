@@ -40,9 +40,12 @@ const Favorites = ({ onMount }) => {
     );
   }
 
+  const handleViewProfileClick = (character) => {
+    navigate('/character', { state: { character } });
+  };
+
   return (
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
-      <h1 className='text-2xl sm:text-4xl mb-4 w-full text-center'>Favorite Characters:</h1>
       {/* show the loading screen while waiting to retrieve favorites data */}
       {/* if there are no favorites show a relevant message with a link to the search page */
         characters.length === 0
@@ -55,7 +58,7 @@ const Favorites = ({ onMount }) => {
           : (
             <CharacterList
               characters={characters}
-              navigate={navigate}
+              onClick={handleViewProfileClick}
               buttonText='VIEW PROFILE'
             />
             )}
