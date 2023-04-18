@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from './Button';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ScrollToTopOnPageChange } from '../utils/ScrollToTop';
 import { useUser } from '../contexts/UserContext';
+import debounce from 'lodash/debounce';
+
 
 const buttonText = 'SEARCH';
 
@@ -37,25 +39,26 @@ const CharacterSearch = ({ onSearch }) => {
     }
   };
 
-  const handleInputValueChange = async (event) => {
+  const handleInputValueChange = debounce(async (event) => {
     const inputValue = event.target.value;
     setInputValue(inputValue);
     if (inputValue !== '') {
       const autoFillApiUrl = `/marvel/character/${inputValue}`;
       try {
-        setLoading(true)
+        setLoading(true);
         const response = await axios.get(autoFillApiUrl);
         setAutoFillSuggestions(response.data);
       } catch (error) {
         console.error(error);
         setAutoFillSuggestions([]);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     } else {
       setAutoFillSuggestions([]);
     }
-  };
+  }, 500);
+  
 
   return (
     <div className='flex flex-wrap justify-center max-w-96 text-center'>
