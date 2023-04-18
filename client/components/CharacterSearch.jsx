@@ -50,10 +50,6 @@ const CharacterSearch = ({ onSearch }) => {
     }
   };
 
-  useEffect(()=>{
-    console.log('autoFillSuggestions', autoFillSuggestions)
-  }, [autoFillSuggestions]);
-
   return (
     <div className='flex flex-wrap justify-center max-w-96 text-center'>
       {errorMessage && <h1 className='text-red-700 bold'>{errorMessage}</h1>}
@@ -71,6 +67,18 @@ const CharacterSearch = ({ onSearch }) => {
             onChange={handleInputValueChange}
             required
           />
+          {autoFillSuggestions.length > 0 && (
+          <ul className="autoFillSuggestions">
+            {autoFillSuggestions.map((suggestion) => (
+              <li key={suggestion.name}>
+                <button 
+                  onClick={() => setInputValue(suggestion.name)}
+                  className='suggestion bg-white w-72 border border-black hover:bg-blue-100'
+                >{suggestion.name}</button>
+              </li>
+            ))}
+          </ul>
+          )}
         </div>
         <div className='basis-full' />
         <Button text={buttonText} type="submit" />
