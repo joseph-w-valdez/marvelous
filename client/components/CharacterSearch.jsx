@@ -39,7 +39,7 @@ const CharacterSearch = ({ onSearch }) => {
     }
   };
 
-  const handleInputValueChange = debounce(async (event) => {
+  const handleInputValueChange = async (event) => {
     const inputValue = event.target.value;
     setInputValue(inputValue);
     if (inputValue !== '') {
@@ -57,8 +57,7 @@ const CharacterSearch = ({ onSearch }) => {
     } else {
       setAutoFillSuggestions([]);
     }
-  }, 500);
-  
+  };
 
   return (
     <div className='flex flex-wrap justify-center max-w-96 text-center'>
