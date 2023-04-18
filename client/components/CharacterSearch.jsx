@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from './Button';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +11,7 @@ const CharacterSearch = ({ onSearch }) => {
   ScrollToTopOnPageChange();
   const [inputValue, setInputValue] = useState('');
   const [errorMessage, setErrorMessage] = useState(undefined);
+  const [autoFillSuggestions, setAutoFillSuggestions] = useState([]);
   const navigate = useNavigate();
   const { setLoading } = useUser();
 
@@ -36,6 +37,23 @@ const CharacterSearch = ({ onSearch }) => {
     }
   };
 
+  const handleInputValueChange = async (event) => {
+    const inputValue = event.target.value;
+    setInputValue(inputValue);
+    const autoFillApiUrl = `/marvel/character/${inputValue}`;
+    try {
+      const response = await axios.get(autoFillApiUrl);
+      setAutoFillSuggestions(response.data);
+    } catch (error) {
+      console.error(error);
+      setAutoFillSuggestions([]);
+    }
+  };
+
+  useEffect(()=>{
+    console.log('autoFillSuggestions', autoFillSuggestions)
+  }, [autoFillSuggestions]);
+
   return (
     <div className='flex flex-wrap justify-center max-w-96 text-center'>
       {errorMessage && <h1 className='text-red-700 bold'>{errorMessage}</h1>}
@@ -44,14 +62,16 @@ const CharacterSearch = ({ onSearch }) => {
         <p className='text-white font-Poppins w-full p-3'>
           Search for any Marvel Character to learn more about them!
         </p>
-        <input
-          type="text"
-          placeholder='Iron Man'
-          className='w-72 h-9 rounded px-3 mt-3'
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          required
-        />
+        <div className="input-wrapper">
+          <input
+            type="text"
+            placeholder='Iron Man'
+            className='w-72 h-9 rounded px-3 mt-3'
+            value={inputValue}
+            onChange={handleInputValueChange}
+            required
+          />
+        </div>
         <div className='basis-full' />
         <Button text={buttonText} type="submit" />
       </form>
