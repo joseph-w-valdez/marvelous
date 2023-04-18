@@ -21,7 +21,6 @@ const CharacterSearchResults = ({ onMount, characterResults }) => {
 
   return (
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
-      <h1 className='text-2xl sm:text-4xl mb-4 w-full text-center'>Search Results:</h1>
       {/* if there are no characterResults show a relevant message with a link to the search page */
       // eslint-disable-next-line multiline-ternary
       characterResults.length === 0 ? (
