@@ -13,7 +13,7 @@ const CharacterSearch = ({ onSearch }) => {
   const [errorMessage, setErrorMessage] = useState(undefined);
   const [autoFillSuggestions, setAutoFillSuggestions] = useState([]);
   const navigate = useNavigate();
-  const { setLoading } = useUser();
+  const { loading, setLoading } = useUser();
 
   const searchHandler = async (event) => {
     event.preventDefault();
@@ -40,12 +40,19 @@ const CharacterSearch = ({ onSearch }) => {
   const handleInputValueChange = async (event) => {
     const inputValue = event.target.value;
     setInputValue(inputValue);
-    const autoFillApiUrl = `/marvel/character/${inputValue}`;
-    try {
-      const response = await axios.get(autoFillApiUrl);
-      setAutoFillSuggestions(response.data);
-    } catch (error) {
-      console.error(error);
+    if (inputValue !== '') {
+      const autoFillApiUrl = `/marvel/character/${inputValue}`;
+      try {
+        setLoading(true)
+        const response = await axios.get(autoFillApiUrl);
+        setAutoFillSuggestions(response.data);
+      } catch (error) {
+        console.error(error);
+        setAutoFillSuggestions([]);
+      } finally {
+        setLoading(false)
+      }
+    } else {
       setAutoFillSuggestions([]);
     }
   };
@@ -67,18 +74,32 @@ const CharacterSearch = ({ onSearch }) => {
             onChange={handleInputValueChange}
             required
           />
-          {autoFillSuggestions.length > 0 && (
-          <ul className="autoFillSuggestions">
-            {autoFillSuggestions.map((suggestion) => (
-              <li key={suggestion.name}>
-                <button 
-                  onClick={() => setInputValue(suggestion.name)}
-                  className='suggestion bg-white w-72 border border-black hover:bg-blue-100'
-                >{suggestion.name}</button>
-              </li>
-            ))}
-          </ul>
-          )}
+          {autoFillSuggestions.length > 0
+            ? (
+              <ul className="autoFillSuggestions">
+                {autoFillSuggestions.map((suggestion) => (
+                  <li key={suggestion.name}>
+                    <button
+                    onClick={() => setInputValue(suggestion.name)}
+                    className="suggestion bg-white border border-black hover:bg-blue-100 w-72"
+                  >
+                      {suggestion.name}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              )
+            : inputValue !== '' && !loading
+              ? (
+                <ul>
+                  <li>
+                    <span className="suggestion bg-white border border-black w-72 inline-block">
+                      No results found
+                    </span>
+                  </li>
+                </ul>
+                )
+              : null}
         </div>
         <div className='basis-full' />
         <Button text={buttonText} type="submit" />
