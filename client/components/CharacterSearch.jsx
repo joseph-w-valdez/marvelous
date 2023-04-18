@@ -22,7 +22,7 @@ const CharacterSearch = ({ onSearch }) => {
       const response = await axios.get(apiUrl);
       onSearch(response.data);
       setErrorMessage(undefined);
-      navigate('/character');
+      navigate('/characterSearchResults');
     } catch (error) {
       if (error.response && error.response.status === 404) {
         console.error(error);
