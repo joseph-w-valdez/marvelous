@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 
 import Home from './pages/Home';
 import Character from './pages/Character';
+import CharacterSearchResults from './pages/CharacterSearchResults';
 import SignIn from './pages/SignIn';
 import Register from './pages/Register';
 import Favorites from './pages/Favorites';
@@ -16,7 +17,7 @@ import { BeatLoader } from 'react-spinners';
 import { useUser } from './contexts/UserContext';
 
 function App() {
-  const [characterData, setCharacterData] = useState(undefined);
+  const [characterResults, setCharacterResults] = useState(undefined)
   const [subNavbarText, setSubNavBarText] = useState('SEARCH');
   const { loading } = useUser();
 
@@ -39,8 +40,9 @@ function App() {
           )}
           <div className="routes-container" style={{ marginTop: '-60px' }}>
             <Routes>
-              <Route path="/" element={<Home onSearch={setCharacterData} onMount={() => setSubNavBarText('SEARCH')} />} />
-              <Route path="/character" element={<Character selectedCharacter={characterData} onMount={() => setSubNavBarText('CHARACTER')} />} />
+              <Route path="/" element={<Home onSearch={setCharacterResults} onMount={() => setSubNavBarText('SEARCH')} />} />
+              <Route path="/character" element={<Character onMount={() => setSubNavBarText('CHARACTER')} />} />
+              <Route path="/characterSearchResults" element={<CharacterSearchResults characterResults={characterResults} onMount={() => setSubNavBarText('RESULTS')} />} />
               <Route path="/sign-in" element={<SignIn onMount={() => setSubNavBarText('ACCOUNT')} />} />
               <Route path="/register" element={<Register onMount={() => setSubNavBarText('ACCOUNT')} />} />
               <Route path="/favorites" element={<Favorites onMount={() => setSubNavBarText('FAVORITES')} />} />

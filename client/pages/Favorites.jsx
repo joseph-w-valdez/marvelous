@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useUser } from '../contexts/UserContext';
 import axiosPost from '../utils/AxiosPost';
-import Button from '../components/Button';
 import { Link, useNavigate } from 'react-router-dom';
 import { ScrollToTopOnPageChange } from '../utils/ScrollToTop';
+import CharacterList from '../components/CharacterList';
 
 const Favorites = ({ onMount }) => {
   ScrollToTopOnPageChange();
@@ -40,9 +40,12 @@ const Favorites = ({ onMount }) => {
     );
   }
 
+  const handleViewProfileClick = (character) => {
+    navigate('/character', { state: { character } });
+  };
+
   return (
     <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
-      <h1 className='text-2xl sm:text-4xl mb-4 w-full text-center'>Favorite Characters:</h1>
       {/* show the loading screen while waiting to retrieve favorites data */}
       {/* if there are no favorites show a relevant message with a link to the search page */
         characters.length === 0
@@ -51,22 +54,13 @@ const Favorites = ({ onMount }) => {
               No favorites found! Click <Link to='/' className='text-blue-500 underline'>here</Link> to search for characters to add!
             </div>
             )
-            /* if there are favorites, go through each item and render them with this format */
+            /* if there are favorites, render the list of characters */
           : (
-              characters.map((character) => (
-                <div key={character.id} className='flex flex-wrap justify-center mb-4 w-full lg:w-1/2 xl:w-1/3'>
-                  <div className="max-w-sm">
-                    <img
-                src={character.imageUrl}
-                alt={character.name}
-                className='border-18 border-red-border w-full object-contain'
-                style={{ borderImage: 'linear-gradient(to bottom, #B13434, #7F1D1D) 1' }}
-              />
-                    <h1 className='text-2xl sm:text-3xl mt-2'>{character.name}</h1>
-                    <Button text='VIEW PROFILE' onClick={() => navigate('/character', { state: { character } })} />
-                  </div>
-                </div>
-              ))
+            <CharacterList
+              characters={characters}
+              onClick={handleViewProfileClick}
+              buttonText='VIEW PROFILE'
+            />
             )}
     </div>
   );
