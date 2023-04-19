@@ -19,6 +19,7 @@ const CharacterSearch = ({ onSearch }) => {
   const inputWrapperRef = useRef(null);
   const [highlightedSuggestionIndex, setHighlightedSuggestionIndex] = useState(-1);
 
+  // for handling direct search submissions
   const searchHandler = async (event) => {
     event.preventDefault();
     const apiUrl = `/marvel/character/${inputValue}`;
@@ -40,7 +41,7 @@ const CharacterSearch = ({ onSearch }) => {
       setLoading(false);
     }
   };
-
+  // for handling changes to the search bar
   const handleInputValueChange = (event) => {
     const inputValue = event.target.value;
     setInputValue(inputValue);
@@ -56,7 +57,7 @@ const CharacterSearch = ({ onSearch }) => {
       setAutoFillSuggestions([]); // Clear suggestions when input is empty
     }
   };
-
+  // for limiting how frequent the autofill suggester function runs per second
   const debouncedHandleInputValueChange = useMemo(() => {
     return debounce(async (inputValue) => {
       if (inputValue !== '') {
@@ -75,7 +76,7 @@ const CharacterSearch = ({ onSearch }) => {
       }
     }, 500);
   }, []);
-
+  // for handling navigation between the input and populated autofill suggestions
   const handleKeyDown = (event) => {
     if (event.key === 'ArrowDown') {
       event.preventDefault();
@@ -92,7 +93,7 @@ const CharacterSearch = ({ onSearch }) => {
       handleSuggestionClick(autoFillSuggestions[highlightedSuggestionIndex].name);
     }
   };
-
+  // for directly going to that specfic character result
   const handleSuggestionClick = async (suggestionName) => {
     setInputValue(suggestionName);
     setShowSuggestions(false);
@@ -107,7 +108,7 @@ const CharacterSearch = ({ onSearch }) => {
       console.error(error);
     }
   };
-
+  // for hiding the suggestions if the user clicks anywhere but the suggestions
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (inputWrapperRef.current && !inputWrapperRef.current.contains(event.target)) {
