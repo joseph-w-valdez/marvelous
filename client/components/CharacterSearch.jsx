@@ -76,10 +76,20 @@ const CharacterSearch = ({ onSearch }) => {
     }, 500);
   }, []);
 
-  const handleSuggestionClick = (suggestionName) => {
+  const handleSuggestionClick = async (suggestionName) => {
     setInputValue(suggestionName);
     setShowSuggestions(false);
+    const autoFillApiUrl = `/marvel/character/${suggestionName}?exactMatch=true`;
+    try {
+      const response = await axios.get(autoFillApiUrl);
+      if (response.data.length === 1) {
+        navigate('/character', { state: { character: response.data[0] } });
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
+  
 
   useEffect(() => {
     const handleClickOutside = (event) => {

@@ -27,25 +27,22 @@ app.use(express.json());
 
 app.get('/marvel/character/:characterName', async (req, res, next) => {
   try {
-    // Get the timestamp and hash for the API request
     const timestamp = Date.now().toString();
     const hash = crypto.createHash('md5').update(timestamp + process.env.API_PRIVATE_KEY + process.env.API_PUBLIC_KEY).digest('hex');
-    // Get the character name from the request parameters
     const characterName = req.params.characterName;
-    // Construct the URL for the API request with nameStartsWith parameter
-    const url = `https://gateway.marvel.com/v1/public/characters?apikey=${process.env.API_PUBLIC_KEY}&ts=${timestamp}&hash=${hash}&nameStartsWith=${encodeURIComponent(characterName)}`;
-    // Send the API request and get the results
+    const exactMatch = req.query.exactMatch === 'true';
+
+    // Change this line to include the 'name' parameter for exact match
+    const searchParam = exactMatch ? `name=${encodeURIComponent(characterName)}` : `nameStartsWith=${encodeURIComponent(characterName)}`;
+    const url = `https://gateway.marvel.com/v1/public/characters?apikey=${process.env.API_PUBLIC_KEY}&ts=${timestamp}&hash=${hash}&${searchParam}`;
+
     const { data: { data: { results } } } = await axios.get(url);
-    // If no results are found, throw a 404 error
     if (results.length === 0) {
       throw new ClientError(404, `Could not find character with name '${characterName}'`);
     }
-    // Extract the relevant properties from each result and construct an array of character objects
     const characterDataList = results.map(({ name, description = 'None Available', thumbnail, comics }) => {
-      // Construct the thumbnail URL and comic appearances string
       const characterThumbnailUrl = thumbnail ? `${thumbnail.path}.${thumbnail.extension}` : 'None Available';
       const characterComicAppearances = comics ? comics.available : 'None Available';
-      // Construct the character data object
       return {
         name,
         description: description || 'None Available',
@@ -53,10 +50,8 @@ app.get('/marvel/character/:characterName', async (req, res, next) => {
         comicAppearances: characterComicAppearances
       };
     });
-    // Send the character data list as a JSON response
     res.status(200).json(characterDataList);
   } catch (error) {
-    // Log the error and pass it to the error handling middleware
     console.error(error);
     next(error);
   }
