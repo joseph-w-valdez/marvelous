@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Button from './Button';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ScrollToTopOnPageChange } from '../utils/ScrollToTop';
 import { useUser } from '../contexts/UserContext';
 import debounce from 'lodash/debounce';
-
 
 const buttonText = 'SEARCH';
 
@@ -16,6 +15,9 @@ const CharacterSearch = ({ onSearch }) => {
   const [autoFillSuggestions, setAutoFillSuggestions] = useState([]);
   const navigate = useNavigate();
   const { loading, setLoading } = useUser();
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const inputWrapperRef = useRef(null);
+
 
   const searchHandler = async (event) => {
     event.preventDefault();
@@ -43,7 +45,6 @@ const CharacterSearch = ({ onSearch }) => {
     if (inputValue !== '') {
       const autoFillApiUrl = `/marvel/character/${inputValue}`;
       try {
-        setLoading(true);
         const response = await axios.get(autoFillApiUrl);
         setAutoFillSuggestions(response.data);
       } catch (error) {
@@ -58,10 +59,31 @@ const CharacterSearch = ({ onSearch }) => {
   }, 500);
 
   const handleInputValueChange = (event) => {
+    setLoading(true);
     const inputValue = event.target.value;
     setInputValue(inputValue);
     debouncedHandleInputValueChange(inputValue);
+    setShowSuggestions(true);
   };
+
+  const handleSuggestionClick = (suggestionName) => {
+    setInputValue(suggestionName);
+    setShowSuggestions(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (inputWrapperRef.current && !inputWrapperRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
+  
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [inputWrapperRef]);
+  
 
   return (
     <div className='flex flex-wrap justify-center max-w-96 text-center'>
@@ -71,7 +93,7 @@ const CharacterSearch = ({ onSearch }) => {
         <p className='text-white font-Poppins w-full p-3'>
           Search for any Marvel Character to learn more about them!
         </p>
-        <div className="input-wrapper">
+        <div className="input-wrapper" ref={inputWrapperRef}>
           <input
             type="text"
             placeholder='Iron Man'
@@ -80,22 +102,22 @@ const CharacterSearch = ({ onSearch }) => {
             onChange={handleInputValueChange}
             required
           />
-          {autoFillSuggestions.length > 0
+          {showSuggestions && autoFillSuggestions.length > 0
             ? (
               <ul className="autoFillSuggestions">
                 {autoFillSuggestions.map((suggestion) => (
                   <li key={suggestion.name}>
                     <button
-                    onClick={() => setInputValue(suggestion.name)}
-                    className="suggestion bg-white border border-black hover:bg-blue-100 w-72"
-                  >
+            onClick={() => handleSuggestionClick(suggestion.name)}
+            className="suggestion bg-white border border-black hover:bg-blue-100 w-72"
+          >
                       {suggestion.name}
                     </button>
                   </li>
                 ))}
               </ul>
               )
-            : inputValue !== '' && !loading
+            : inputValue !== '' && !loading && showSuggestions
               ? (
                 <ul>
                   <li>
