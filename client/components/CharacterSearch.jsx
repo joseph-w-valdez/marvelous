@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Button from './Button';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -41,30 +41,40 @@ const CharacterSearch = ({ onSearch }) => {
     }
   };
 
-  const debouncedHandleInputValueChange = debounce(async (inputValue) => {
-    if (inputValue !== '') {
-      const autoFillApiUrl = `/marvel/character/${inputValue}`;
-      try {
-        const response = await axios.get(autoFillApiUrl);
-        setAutoFillSuggestions(response.data);
-      } catch (error) {
-        console.error(error);
-        setAutoFillSuggestions([]);
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      setAutoFillSuggestions([]);
-    }
-  }, 500);
-
   const handleInputValueChange = (event) => {
-    setLoading(true);
     const inputValue = event.target.value;
     setInputValue(inputValue);
-    debouncedHandleInputValueChange(inputValue);
     setShowSuggestions(true);
+
+    if (inputValue !== '') {
+      setLoading(true);
+      debouncedHandleInputValueChange.cancel(); // Cancel the previous debounced calls
+      debouncedHandleInputValueChange(inputValue);
+    } else {
+      setLoading(false);
+      debouncedHandleInputValueChange.cancel();
+      setAutoFillSuggestions([]); // Clear suggestions when input is empty
+    }
   };
+
+  const debouncedHandleInputValueChange = useMemo(() => {
+    return debounce(async (inputValue) => {
+      if (inputValue !== '') {
+        const autoFillApiUrl = `/marvel/character/${inputValue}`;
+        try {
+          const response = await axios.get(autoFillApiUrl);
+          setAutoFillSuggestions(response.data);
+        } catch (error) {
+          console.error(error);
+          setAutoFillSuggestions([]);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setAutoFillSuggestions([]);
+      }
+    }, 500);
+  }, []);
 
   const handleSuggestionClick = (suggestionName) => {
     setInputValue(suggestionName);
