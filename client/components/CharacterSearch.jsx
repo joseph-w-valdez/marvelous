@@ -39,9 +39,7 @@ const CharacterSearch = ({ onSearch }) => {
     }
   };
 
-  const handleInputValueChange = async (event) => {
-    const inputValue = event.target.value;
-    setInputValue(inputValue);
+  const debouncedHandleInputValueChange = debounce(async (inputValue) => {
     if (inputValue !== '') {
       const autoFillApiUrl = `/marvel/character/${inputValue}`;
       try {
@@ -57,6 +55,12 @@ const CharacterSearch = ({ onSearch }) => {
     } else {
       setAutoFillSuggestions([]);
     }
+  }, 500);
+
+  const handleInputValueChange = (event) => {
+    const inputValue = event.target.value;
+    setInputValue(inputValue);
+    debouncedHandleInputValueChange(inputValue);
   };
 
   return (
