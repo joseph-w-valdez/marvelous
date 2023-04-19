@@ -120,11 +120,11 @@ const SignIn = ({ onMount }) => {
             <div className='basis-full' />
             <Link to='/register'>
               <p className='text-blue-500 underline text-sm'>
-                Don&apos;t have an account? click here!
+                Don&apos;t have an account? click here to register!
               </p>
             </Link>
             <div className='basis-full' />
-            <Button text='DEMO BUTTON' type='button' onClick={handleDemo} />
+            <Button text='DEMO LOGIN HERE' type='button' onClick={handleDemo} />
           </>
           )}
     </div>
