@@ -17,7 +17,7 @@ const CharacterSearch = ({ onSearch }) => {
   const { loading, setLoading } = useUser();
   const [showSuggestions, setShowSuggestions] = useState(false);
   const inputWrapperRef = useRef(null);
-
+  const [highlightedSuggestionIndex, setHighlightedSuggestionIndex] = useState(-1);
 
   const searchHandler = async (event) => {
     event.preventDefault();
@@ -76,9 +76,27 @@ const CharacterSearch = ({ onSearch }) => {
     }, 500);
   }, []);
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      setHighlightedSuggestionIndex((prevIndex) =>
+        prevIndex < autoFillSuggestions.length - 1 ? prevIndex + 1 : -1
+      );
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      setHighlightedSuggestionIndex((prevIndex) =>
+        prevIndex > -1 ? prevIndex - 1 : autoFillSuggestions.length - 1
+      );
+    } else if (event.key === 'Enter' && highlightedSuggestionIndex >= 0) {
+      event.preventDefault();
+      handleSuggestionClick(autoFillSuggestions[highlightedSuggestionIndex].name);
+    }
+  };
+
   const handleSuggestionClick = async (suggestionName) => {
     setInputValue(suggestionName);
     setShowSuggestions(false);
+    setHighlightedSuggestionIndex(-1);
     const autoFillApiUrl = `/marvel/character/${suggestionName}?exactMatch=true`;
     try {
       const response = await axios.get(autoFillApiUrl);
@@ -89,7 +107,6 @@ const CharacterSearch = ({ onSearch }) => {
       console.error(error);
     }
   };
-  
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -97,13 +114,12 @@ const CharacterSearch = ({ onSearch }) => {
         setShowSuggestions(false);
       }
     };
-  
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [inputWrapperRef]);
-  
 
   return (
     <div className='flex flex-wrap justify-center max-w-96 text-center'>
@@ -120,16 +136,17 @@ const CharacterSearch = ({ onSearch }) => {
             className='w-72 h-9 rounded px-3 mt-3'
             value={inputValue}
             onChange={handleInputValueChange}
+            onKeyDown={handleKeyDown}
             required
           />
           {showSuggestions && autoFillSuggestions.length > 0
             ? (
               <ul className="autoFillSuggestions">
-                {autoFillSuggestions.map((suggestion) => (
+                {autoFillSuggestions.map((suggestion, index) => (
                   <li key={suggestion.name}>
                     <button
             onClick={() => handleSuggestionClick(suggestion.name)}
-            className="suggestion bg-white border border-black hover:bg-blue-100 w-72"
+            className={`suggestion bg-white border border-black hover:bg-blue-100 w-72${highlightedSuggestionIndex === index ? ' bg-blue-100' : ''}`}
           >
                       {suggestion.name}
                     </button>
