@@ -3,9 +3,7 @@ const ClientError = require('./client-error'); // eslint-disable-line
 
 function authorizationMiddleware(req, res, next) {
   // * Try to get the 'X-Access-Token' from the request headers.
-  console.log('MIDDLEWARE', req);
   const token = req.get('X-Access-Token');
-  console.log('TOKEN', token);
   // * If no token is provided, throw a 401 error with the message 'authentication required'
   if (!token) throw new ClientError(401, 'authentication required');
   // * Use jwt.verify() to verify the authenticity of the token and extract its payload

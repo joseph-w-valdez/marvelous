@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Button from './Button';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ScrollToTopOnPageChange } from '../utils/ScrollToTop';
 import { useUser } from '../contexts/UserContext';
+import debounce from 'lodash/debounce';
 
 const buttonText = 'SEARCH';
 
@@ -11,8 +12,12 @@ const CharacterSearch = ({ onSearch }) => {
   ScrollToTopOnPageChange();
   const [inputValue, setInputValue] = useState('');
   const [errorMessage, setErrorMessage] = useState(undefined);
+  const [autoFillSuggestions, setAutoFillSuggestions] = useState([]);
   const navigate = useNavigate();
-  const { setLoading } = useUser();
+  const { loading, setLoading } = useUser();
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const inputWrapperRef = useRef(null);
+  const [highlightedSuggestionIndex, setHighlightedSuggestionIndex] = useState(-1);
 
   const searchHandler = async (event) => {
     event.preventDefault();
@@ -36,6 +41,86 @@ const CharacterSearch = ({ onSearch }) => {
     }
   };
 
+  const handleInputValueChange = (event) => {
+    const inputValue = event.target.value;
+    setInputValue(inputValue);
+    setShowSuggestions(true);
+
+    if (inputValue !== '') {
+      setLoading(true);
+      debouncedHandleInputValueChange.cancel(); // Cancel the previous debounced calls
+      debouncedHandleInputValueChange(inputValue);
+    } else {
+      setLoading(false);
+      debouncedHandleInputValueChange.cancel();
+      setAutoFillSuggestions([]); // Clear suggestions when input is empty
+    }
+  };
+
+  const debouncedHandleInputValueChange = useMemo(() => {
+    return debounce(async (inputValue) => {
+      if (inputValue !== '') {
+        const autoFillApiUrl = `/marvel/character/${inputValue}`;
+        try {
+          const response = await axios.get(autoFillApiUrl);
+          setAutoFillSuggestions(response.data);
+        } catch (error) {
+          console.error(error);
+          setAutoFillSuggestions([]);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setAutoFillSuggestions([]);
+      }
+    }, 500);
+  }, []);
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      setHighlightedSuggestionIndex((prevIndex) =>
+        prevIndex < autoFillSuggestions.length - 1 ? prevIndex + 1 : -1
+      );
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      setHighlightedSuggestionIndex((prevIndex) =>
+        prevIndex > -1 ? prevIndex - 1 : autoFillSuggestions.length - 1
+      );
+    } else if (event.key === 'Enter' && highlightedSuggestionIndex >= 0) {
+      event.preventDefault();
+      handleSuggestionClick(autoFillSuggestions[highlightedSuggestionIndex].name);
+    }
+  };
+
+  const handleSuggestionClick = async (suggestionName) => {
+    setInputValue(suggestionName);
+    setShowSuggestions(false);
+    setHighlightedSuggestionIndex(-1);
+    const autoFillApiUrl = `/marvel/character/${suggestionName}?exactMatch=true`;
+    try {
+      const response = await axios.get(autoFillApiUrl);
+      if (response.data.length === 1) {
+        navigate('/character', { state: { character: response.data[0] } });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (inputWrapperRef.current && !inputWrapperRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [inputWrapperRef]);
+
   return (
     <div className='flex flex-wrap justify-center max-w-96 text-center'>
       {errorMessage && <h1 className='text-red-700 bold'>{errorMessage}</h1>}
@@ -44,14 +129,43 @@ const CharacterSearch = ({ onSearch }) => {
         <p className='text-white font-Poppins w-full p-3'>
           Search for any Marvel Character to learn more about them!
         </p>
-        <input
-          type="text"
-          placeholder='Iron Man'
-          className='w-72 h-9 rounded px-3 mt-3'
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          required
-        />
+        <div className="input-wrapper" ref={inputWrapperRef}>
+          <input
+            type="text"
+            placeholder='Iron Man'
+            className='w-72 h-9 rounded px-3 mt-3'
+            value={inputValue}
+            onChange={handleInputValueChange}
+            onKeyDown={handleKeyDown}
+            required
+          />
+          {showSuggestions && autoFillSuggestions.length > 0
+            ? (
+              <ul className="autoFillSuggestions">
+                {autoFillSuggestions.map((suggestion, index) => (
+                  <li key={suggestion.name}>
+                    <button
+            onClick={() => handleSuggestionClick(suggestion.name)}
+            className={`suggestion bg-white border border-black hover:bg-blue-100 w-72${highlightedSuggestionIndex === index ? ' bg-blue-100' : ''}`}
+          >
+                      {suggestion.name}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              )
+            : inputValue !== '' && !loading && showSuggestions
+              ? (
+                <ul>
+                  <li>
+                    <span className="suggestion bg-white border border-black w-72 inline-block">
+                      No results found
+                    </span>
+                  </li>
+                </ul>
+                )
+              : null}
+        </div>
         <div className='basis-full' />
         <Button text={buttonText} type="submit" />
       </form>

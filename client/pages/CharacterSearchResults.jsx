@@ -1,5 +1,4 @@
 import React from 'react';
-import Button from '../components/Button';
 import { Link, useNavigate } from 'react-router-dom';
 import CharacterCard from '../components/CharacterCard';
 
