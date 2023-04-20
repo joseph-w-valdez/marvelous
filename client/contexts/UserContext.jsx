@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const UserContext = createContext();
 
@@ -14,9 +14,21 @@ const UserProvider = ({ children }) => {
   const [user, setUser] = useState({ username: null, pictureUrl: null, favorites: [] });
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
   const reset = () => {
     setUser({ username: null, pictureUrl: null, favorites: [] });
+    localStorage.removeItem('user');
   };
+
+  useEffect(() => {
+    localStorage.setItem('user', JSON.stringify(user));
+  }, [user]);
 
   const value = { user, setUser, reset, loading, setLoading };
 

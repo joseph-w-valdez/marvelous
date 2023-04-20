@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import SubNavbar from './components/SubNavbar';
 import Navbar from './components/Navbar';
-
 import Home from './pages/Home';
 import Character from './pages/Character';
 import CharacterSearchResults from './pages/CharacterSearchResults';
@@ -13,13 +12,12 @@ import TermsOfService from './pages/Terms';
 import PrivacyPolicy from './pages/Policy';
 import konamiCodeListener from './utils/EasterEgg';
 import { BeatLoader } from 'react-spinners';
-
 import { useUser } from './contexts/UserContext';
 
 function App() {
-  const [characterResults, setCharacterResults] = useState(undefined)
+  const [characterResults, setCharacterResults] = useState(undefined);
   const [subNavbarText, setSubNavBarText] = useState('SEARCH');
-  const { loading } = useUser();
+  const { loading, isLoggedIn } = useUser();
 
   useEffect(() => {
     const cleanup = konamiCodeListener();
@@ -43,12 +41,12 @@ function App() {
               <Route path="/" element={<Home onSearch={setCharacterResults} onMount={() => setSubNavBarText('SEARCH')} />} />
               <Route path="/character" element={<Character onMount={() => setSubNavBarText('CHARACTER')} />} />
               <Route path="/characterSearchResults" element={<CharacterSearchResults characterResults={characterResults} onMount={() => setSubNavBarText('RESULTS')} />} />
-              <Route path="/sign-in" element={<SignIn onMount={() => setSubNavBarText('ACCOUNT')} />} />
-              <Route path="/register" element={<Register onMount={() => setSubNavBarText('ACCOUNT')} />} />
+              {!isLoggedIn && <Route path="/sign-in" element={<SignIn onMount={() => setSubNavBarText('ACCOUNT')} />} />}
+              {!isLoggedIn && <Route path="/register" element={<Register onMount={() => setSubNavBarText('ACCOUNT')} />} />}
               <Route path="/favorites" element={<Favorites onMount={() => setSubNavBarText('FAVORITES')} />} />
               <Route path="/Terms" element={<TermsOfService onMount={() => setSubNavBarText('ACCOUNT')} />} />
               <Route path="/Policy" element={<PrivacyPolicy onMount={() => setSubNavBarText('ACCOUNT')} />} />
-              <Route path="/Policy" element={<PrivacyPolicy onMount={() => setSubNavBarText('ACCOUNT')} />} />
+              <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </div>
         </div>

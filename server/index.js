@@ -169,8 +169,8 @@ app.post('/marvel/sign-in', (req, res, next) => {
           if (!isMatching) {
             throw new ClientError(401, 'invalid login');
           }
-          // If password is valid, create a JWT token and send it as a response
-          const token = jwt.sign({ userId: id }, process.env.TOKEN_SECRET);
+          // If password is valid, create a JWT token and send it as a response; token expires in 24h for security
+          const token = jwt.sign({ userId: id }, process.env.TOKEN_SECRET, { expiresIn: '24h' });
           res.status(200).json({ token, profilePictureUrl, favoritesList });
         });
     })
