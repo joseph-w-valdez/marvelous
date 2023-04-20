@@ -4,7 +4,7 @@ import CharacterCard from './CharacterCard';
 
 const CharacterList = ({ characters, onClick }) => {
   return (
-    <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center'>
+    <div className='text-white mx-7 mt-2 font-Poppins flex flex-wrap justify-center w-full'>
       {characters.length === 0
         ? (
           <div className="w-full  text-center text-lg">
