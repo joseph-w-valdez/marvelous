@@ -66,6 +66,7 @@ const SignIn = ({ onMount }) => {
       });
       setAuthToken(res.data.token);
       setSuccessMessage('Signed-in successfully. Please wait 5 seconds before navigating to the sign-in page. If you are not redirected, click ');
+      setError(null);
     } catch (err) {
       console.error(err);
     } finally {
