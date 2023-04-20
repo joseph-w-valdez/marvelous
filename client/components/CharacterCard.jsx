@@ -14,7 +14,7 @@ const CharacterCard = ({ character, onClick }) => {
     <div className='flex flex-wrap justify-center mb-4 w-full lg:w-1/2 xl:w-1/3'>
       <div className="max-w-sm">
         <div
-          className="character-image-frame overflow-hidden h-64 w-64 sm:h-96 sm:w-96"
+          className="character-image-frame overflow-hidden h-64  sm:h-96 sm:w-96"
           style={{ border: '18px solid', borderColor: '#B13434', borderImage: 'linear-gradient(to bottom, #B13434, #7F1D1D) 1'}}>
           <img
             src={character.imageUrl}
@@ -22,7 +22,7 @@ const CharacterCard = ({ character, onClick }) => {
             className='w-full h-full object-cover'
           />
         </div>
-        <h1 className='text-2xl sm:text-3xl mt-2'>{character.name}</h1>
+        <h1 className='text-2xl sm:text-3xl mt-2 w-64 sm:w-96'>{character.name}</h1>
         <Button text='VIEW PROFILE' onClick={handleViewProfileClick} />
       </div>
     </div>
