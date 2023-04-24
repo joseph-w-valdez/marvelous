@@ -49,7 +49,7 @@ const Character = ({ selectedCharacter }) => {
         console.error(error);
       } finally {
         setLoading(false);
-      }
+      } 
     };
     fetchFavorites();
   }, []); // Add an empty dependency array to avoid an infinite loop
