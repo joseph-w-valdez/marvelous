@@ -59,7 +59,10 @@ app.get('/marvel/character/:characterName', async (req, res, next) => {
 
 function getUserByUsername(username) {
   const sql = `
-    select "id", "username", "email", "createdAt" from "users" where "username" = $1 limit 1
+    SELECT u."id", u."username", u."email", u."createdAt", f."characterId"
+    FROM "users" AS u
+    LEFT JOIN "favorites" AS f ON u."id" = f."userId"
+    WHERE u."username" = $1
   `;
   const params = [username];
   return db.query(sql, params);
@@ -145,23 +148,20 @@ app.post('/marvel/sign-in', (req, res, next) => {
   }
 
   const sql = `
-    SELECT "id",
-           "passwordHash",
-           "profilePictureUrl"
-      FROM "users"
-     WHERE "username" = $1
+    SELECT u."id",
+           u."passwordHash",
+           u."profilePictureUrl",
+           f."characterId"
+      FROM "users" AS u
+      LEFT JOIN "favorites" AS f ON u."id" = f."userId"
+     WHERE u."username" = $1
   `;
   const params = [username];
 
   db.query(sql, params)
     .then(async (result) => {
-      const [user] = result.rows;
-      if (!user) {
-        throw new ClientError(401, 'invalid login');
-      }
-
-      const { id, passwordHash, profilePictureUrl } = user;
-      const favoritesList = await getFavoriteCharacterIds(user.id);
+      const { id, passwordHash, profilePictureUrl } = result.rows[0];
+      const favoritesList = result.rows.filter((row) => row.characterId).map((row) => row.characterId);
 
       return argon2.verify(passwordHash, password)
         .then((isMatching) => {
@@ -186,12 +186,13 @@ app.post('/marvel/demo', async (req, res, next) => {
   const password = 'Vaporeon!1';
 
   const sql = `
-    SELECT "id",
-           "passwordHash",
-           "profilePictureUrl",
-           "username"
-      FROM "users"
-     WHERE "username" = $1
+    SELECT u."id",
+           u."passwordHash",
+           u."profilePictureUrl",
+           f."characterId"
+      FROM "users" AS u
+      LEFT JOIN "favorites" AS f ON u."id" = f."userId"
+     WHERE u."username" = $1
   `;
   const params = [username];
 
@@ -204,7 +205,7 @@ app.post('/marvel/demo', async (req, res, next) => {
     }
 
     const { id, passwordHash, profilePictureUrl } = user;
-    const favoritesList = await getFavoriteCharacterIds(user.id);
+    const favoritesList = result.rows.filter((row) => row.characterId).map((row) => row.characterId);
 
     const isMatching = await argon2.verify(passwordHash, password);
     if (!isMatching) {
@@ -218,6 +219,7 @@ app.post('/marvel/demo', async (req, res, next) => {
     next(err);
   }
 });
+
 
 // function to add a new character to the database
 async function addNewCharacter(selectedCharacter) {
@@ -281,9 +283,13 @@ app.post('/marvel/toggleFavorites', async (req, res, next) => {
         DELETE FROM favorites
         WHERE "userId" = $1 AND "characterId" = $2
       `, [userId, characterId]);
+      // Save the updated favorites list to the server immediately
+      await saveFavoritesToServer(userId);
       res.status(200).json({ message: 'Successfully removed from favorites.', id: characterId });
     } else {
       await addFavorite(userId, characterId);
+      // Save the updated favorites list to the server immediately
+      await saveFavoritesToServer(userId);
       if (characterId) {
         res.status(201).json({ message: 'Successfully added to favorites', id: characterId });
       } else {
@@ -294,6 +300,40 @@ app.post('/marvel/toggleFavorites', async (req, res, next) => {
     next(err);
   }
 });
+
+async function saveFavoritesToServer(userId) {
+  try {
+    const favoritesList = await getFavoriteCharacterIds(userId);
+    const token = localStorage.getItem('token');
+    await axios.post('/marvel/savefavorites', { favoritesList }, { headers: { Authorization: `Bearer ${token}` } });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+app.post('/marvel/savefavorites', authorizationMiddleware, async (req, res, next) => {
+  try {
+    const { favoritesList } = req.body;
+    if (!favoritesList || !Array.isArray(favoritesList)) {
+      throw new ClientError(400, 'favoritesList must be an array');
+    }
+    const userId = req.user.id;
+    // Delete the old favorites for this user
+    await db.query(`
+      DELETE FROM favorites
+      WHERE "userId" = $1
+    `, [userId]);
+    // Insert the new favorites for this user
+    for (const characterId of favoritesList) {
+      await addFavorite(userId, characterId);
+    }
+    res.status(200).json({ message: 'Successfully saved favorites to server' });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 
 app.post('/marvel/getfavorites', authorizationMiddleware, async (req, res, next) => {
   try {
@@ -315,6 +355,30 @@ app.post('/marvel/getfavorites', authorizationMiddleware, async (req, res, next)
   } catch (error) {
     console.error(error);
     next(error);
+  }
+});
+
+app.post('/marvel/updateFavorites', authorizationMiddleware, async (req, res, next) => {
+  try {
+    const { favorites } = req.body;
+    if (!favorites || !Array.isArray(favorites)) {
+      throw new ClientError(400, 'favorites must be an array');
+    }
+
+    const userId = req.userId;
+    // Delete all existing favorites for the user
+    await db.query(`
+      DELETE FROM favorites
+      WHERE "userId" = $1
+    `, [userId]);
+
+    // Insert new favorites for the user
+    const promises = favorites.map((characterId) => addFavorite(userId, characterId));
+    await Promise.all(promises);
+
+    res.status(200).json({ message: 'Favorites updated successfully' });
+  } catch (err) {
+    next(err);
   }
 });
 
