@@ -23,12 +23,6 @@ Marvelous is a full-stack web application built with JavaScript, Node.js, and Re
 ### User can add and remove favorite characters from their account
 ![UserFavorites](https://user-images.githubusercontent.com/117682160/226069529-72301ef8-f720-41e9-adff-f6aaf93f7ee3.gif)
 
-### Stretch Features
-1. View a list of all upcoming major Marvel comics events in the current year
-2. Using the NewsAPI to show Marvel news
-3. Introduce a search result page for characters that are similar to the query
-4. Use a search result suggestion in the search bar
-
 ### If you'd like to run the Marvelous project on your local machine
 
 * System Requirements:
