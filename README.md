@@ -4,7 +4,7 @@ Marvelous is a full-stack web application built with JavaScript, Node.js, and Re
 
  [Live link to my website here](https://marvelous.herokuapp.com/).
  
- ### Features and Technologies
+ ## Features and Technologies
 
 * Utilized MD5 hashing to access the Marvel API and fetch data about characters for display in an intuitive and visually appealing way.
 * Built the frontend of Marvelous using React, React Router, and React Hook Form, and styled it with Tailwind CSS.
@@ -23,7 +23,7 @@ Marvelous is a full-stack web application built with JavaScript, Node.js, and Re
 ### User can add and remove favorite characters from their account
 ![UserFavorites](https://user-images.githubusercontent.com/117682160/226069529-72301ef8-f720-41e9-adff-f6aaf93f7ee3.gif)
 
-### If you'd like to run the Marvelous project on your local machine
+## If you'd like to run the Marvelous project on your local machine
 
 * System Requirements:
   * Node.js: You will need to have Node.js installed on your computer. The minimum version of Node.js that your application requires is v14.15.1. You can download the latest version of Node.js from the official website: https://nodejs.org/en/download/
